@@ -1,0 +1,22 @@
+{
+  "name": "hero.neon.moe",
+  "version": "1.0.0",
+  "description": "A sheet manager for HERO-like RPG systems.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/excitedneon/hero.neon.moe.git"
+  },
+  "author": "excitedneon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/excitedneon/hero.neon.moe/issues"
+  },
+  "homepage": "https://github.com/excitedneon/hero.neon.moe#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
