@@ -19,6 +19,8 @@ const characteristicValues = {
   "stun": [20, 1, 2, false]
 };
 const rollable = ["str", "dex", "con", "int", "ego", "pre"];
+const miscStats = ["totalexp", "spentexp", "unspentexp", "curend", "curbody", "curstun",
+  "hthdmg", "liftwg"];
 const strengthLiftValues = [0, 8, 16, 25, 38, 50, 50, 50, 75, 75, 100, 100,
   100, 150, 150, 200, 200, 200, 300, 300, 400, 400, 500, 600, 600, 800, 800,
   800, 1200, 1200, 1600, 1600, 1600, 1600, 1600, 3200, 3200, 3200, 3200,
@@ -40,19 +42,26 @@ let getCharacteristicValueFromPoints = (name, points) => {
 let increaseStat = (stat) => {
   operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) + characteristicValues[stat][1]);
   requestUpdateStat(stat, "up");
+  updateMiscStats();
 };
 
 let decreaseStat = (stat) => {
   operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) - characteristicValues[stat][1]);
   requestUpdateStat(stat, "down");
+  updateMiscStats();
 };
 
 let operateStat = (stat, newPoints) => {
-  let newValue = getCharacteristicValueFromPoints(stat, newPoints);
-  let newRoll = (9 + Math.floor(newValue / 5));
-  document.querySelectorAll(".pts" + stat).forEach(e => e.innerHTML = newPoints);
-  document.querySelectorAll(".val" + stat).forEach(e => e.innerHTML = newValue);
-  document.querySelectorAll(".rol" + stat).forEach(e => { if (rollable.indexOf(stat) != -1) e.innerHTML = newRoll; });
+  if (Object.keys(characteristicValues).indexOf(stat) != -1) {
+    let newValue = getCharacteristicValueFromPoints(stat, newPoints);
+    let newRoll = (9 + Math.floor(newValue / 5));
+    document.querySelectorAll(".pts" + stat).forEach(e => e.innerHTML = newPoints);
+    document.querySelectorAll(".val" + stat).forEach(e => e.innerHTML = newValue);
+    document.querySelectorAll(".rol" + stat).forEach(e => { if (rollable.indexOf(stat) != -1) e.innerHTML = newRoll; });
+  } else {
+    console.log("Set " + stat + " to " + newPoints + ".");
+    document.querySelectorAll("." + stat).forEach(e => e.innerHTML = newPoints);
+  }
 }
 
 let requestUpdateStat = (stat, action) => {
@@ -61,10 +70,22 @@ let requestUpdateStat = (stat, action) => {
     operateStat(stat, req.response);
   };
   req.addEventListener("load", listener);
-  req.open("PUT", "http://" + window.location.host + "/e/" + characterName + "/" + action + "/" + stat);
+  req.open("PUT", "http://" + window.location.host + "/e/" + characterName + "/" + action + "/" + stat, true);
   req.send();
 };
 
-Object.keys(characteristicValues).forEach((stat) => {
-  requestUpdateStat(stat, "boop")
-});
+let updateMiscStats = () => {
+  miscStats.forEach((stat) => {
+    requestUpdateStat(stat, "boop");
+  });
+};
+
+let updateAllStats = () => {
+  Object.keys(characteristicValues).forEach((stat) => {
+    requestUpdateStat(stat, "boop");
+  });
+  updateMiscStats();
+};
+
+updateAllStats();
+window.setInterval(updateAllStats, 1000);

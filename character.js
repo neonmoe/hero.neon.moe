@@ -40,12 +40,12 @@ class Character {
       "dcv": 0, "omcv": 0, "dmcv": 0, "spd": 0, "pd": 0, "ed": 0, "rec": 0,
       "end": 0, "body": 0, "stun": 0
     };
-    this.status = {
-      end: this.getCharacteristicValue("end"),
-      body: this.getCharacteristicValue("body"),
-      stun: this.getCharacteristicValue("stun"),
+    this.stats = {
+      "curend": this.getCharacteristicValue("end"),
+      "curbody": this.getCharacteristicValue("body"),
+      "curstun": this.getCharacteristicValue("stun"),
+      "totalexp": 25,
     };
-    this.experience = 25;
     console.log("Created a character named " + name + "!");
   }
 
@@ -70,7 +70,7 @@ class Character {
   }
 
   availablePoints() {
-    return this.experience - this.spentExp();
+    return this.stats.totalexp - this.spentExp();
   }
 }
 
@@ -78,7 +78,7 @@ class World {
   constructor() {
     this.characters = [ ];
     this.characternames = [ ];
-    this.maxPopulation = 5;
+    this.maxPopulation = 64;
   }
 
   characterExists(name) {
@@ -117,13 +117,6 @@ module.exports = {
     let sheet = {
       name: character.name,
     };
-    sheet["spentexp"] = character.spentExp();
-    sheet["totalexp"] = character.experience;
-    sheet["end"] = character.status.end;
-    sheet["body"] = character.status.body;
-    sheet["stun"] = character.status.stun;
-    sheet["hthdmg"] = character.getHTHDamage();
-    sheet["liftwg"] = character.getLiftWeight();
     res.render("sheet", sheet);
   },
 
@@ -134,18 +127,35 @@ module.exports = {
       let action = req.params.action;
       let stat = req.params.stat;
       let character = world.getCharacter(charname);
-      let cost = characteristicValues[stat][1];
-      switch (action) {
-        case "up":
-          if (character.availablePoints() >= cost) {
-            character.characteristicPoints[stat] += cost;
-          }
-          break;
-        case "down":
-          character.characteristicPoints[stat] -= cost;
-          break;
+      if (Object.keys(characteristicValues).indexOf(stat) != -1) {
+        let cost = characteristicValues[stat][1];
+        switch (action) {
+          case "up":
+            if (character.availablePoints() >= cost) {
+              character.characteristicPoints[stat] += cost;
+            }
+            break;
+          case "down":
+            character.characteristicPoints[stat] -= cost;
+            if (character.getCharacteristicValue(stat) < 0) {
+                character.characteristicPoints[stat] += cost;
+            }
+            break;
+        }
+        response = "" + character.characteristicPoints[stat];
+      } else {
+        if (stat == "spentexp") {
+          response = "" + (character.stats.totalexp - character.availablePoints());
+        } else if (stat == "unspentexp") {
+          response = "" + character.availablePoints();
+        } else if (stat == "hthdmg") {
+          response = "" + character.getHTHDamage();
+        } else if (stat == "liftwg") {
+          response = "" + character.getLiftWeight();
+        } else {
+          response = "" + character.stats[stat];
+        }
       }
-      response = "" + character.characteristicPoints[stat];
     }
     res.send(response);
   },
