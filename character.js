@@ -28,7 +28,7 @@ const strengthLiftValues = [0, 8, 16, 25, 38, 50, 50, 50, 75, 75, 100, 100,
   800000, 800000, 1600000, 1600000, 1600000, 1600000, 1600000, 3200000,
   3200000, 3200000, 3200000, 3200000, 6400000, 6400000, 6400000, 6400000,
   6400000, 12500000, 12500000, 12500000, 12500000, 12500000, 25000000,
-  25000000, 25000000, 25000000]
+  25000000, 25000000, 25000000];
 
 class Character {
   constructor(name) {
@@ -117,13 +117,6 @@ module.exports = {
     let sheet = {
       name: character.name,
     };
-    Object.keys(characteristicValues).forEach((c) => {
-      sheet["val" + c] = character.getCharacteristicValue(c);
-      sheet["pts" + c] = character.characteristicPoints[c];
-      if (characteristicValues[c][3]) {
-          sheet["rol" + c] = (9 + Math.floor(character.getCharacteristicValue(c) / 5)) + "-";
-      }
-    });
     sheet["spentexp"] = character.spentExp();
     sheet["totalexp"] = character.experience;
     sheet["end"] = character.status.end;
@@ -136,6 +129,7 @@ module.exports = {
 
   edit: (req, res) => {
     let charname = req.params.cid.toLowerCase();
+    let response = "";
     if (world.characterExists(charname)) {
       let action = req.params.action;
       let stat = req.params.stat;
@@ -150,8 +144,9 @@ module.exports = {
           character.characteristicPoints[stat]--;
           break;
       }
+      response = "" + character.characteristicPoints[stat];
     }
-    res.redirect("/c/" + charname);
+    res.send(response);
   },
 
   list: _ => {

@@ -1,31 +1,39 @@
+mixin statrow(stat)
+  <tr>
+    <td class="val#{stat}">10</td>
+    <td>#{stat} <a onclick="increaseStat('#{stat}')">↑</a> <a onclick="decreaseStat('#{stat}')">↓</a></td>
+    <td class="pts#{stat}">0</td>
+    <td class="rol#{stat}">11-</td>
+  </tr>
+
 html
   head
     title Sheet for #{name}
     style
       include style.css
   body
-    h1 Sheet for #{name}
+    h1#charactername #{name}
     <hr>
     <table>
       <tr>Characteristics</tr>
       <tr><td>Val</td><td>Char</td><td>Points</td><td>Roll</td></tr>
-      <tr><td>#{valstr}</td><td>STR <a href="/e/#{name}/up/str">↑</a> <a href="/e/#{name}/down/str">↓</a></td><td>#{ptsstr}</td><td>#{rolstr}</td></tr>
-      <tr><td>#{valdex}</td><td>DEX <a href="/e/#{name}/up/dex">↑</a> <a href="/e/#{name}/down/dex">↓</a></td><td>#{ptsdex}</td><td>#{roldex}</td></tr>
-      <tr><td>#{valcon}</td><td>CON <a href="/e/#{name}/up/con">↑</a> <a href="/e/#{name}/down/con">↓</a></td><td>#{ptscon}</td><td>#{rolcon}</td></tr>
-      <tr><td>#{valint}</td><td>INT <a href="/e/#{name}/up/int">↑</a> <a href="/e/#{name}/down/int">↓</a></td><td>#{ptsint}</td><td>#{rolint}</td></tr>
-      <tr><td>#{valego}</td><td>EGO <a href="/e/#{name}/up/ego">↑</a> <a href="/e/#{name}/down/ego">↓</a></td><td>#{ptsego}</td><td>#{rolego}</td></tr>
-      <tr><td>#{valpre}</td><td>PRE <a href="/e/#{name}/up/pre">↑</a> <a href="/e/#{name}/down/pre">↓</a></td><td>#{ptspre}</td><td>#{rolpre}</td></tr>
-      <tr><td>#{valocv}</td><td>OCV <a href="/e/#{name}/up/ocv">↑</a> <a href="/e/#{name}/down/ocv">↓</a></td><td>#{ptsocv}</td><td>#{rolocv}</td></tr>
-      <tr><td>#{valdcv}</td><td>DCV <a href="/e/#{name}/up/dcv">↑</a> <a href="/e/#{name}/down/dcv">↓</a></td><td>#{ptsdcv}</td><td>#{roldcv}</td></tr>
-      <tr><td>#{valomcv}</td><td>OMCV <a href="/e/#{name}/up/omcv">↑</a> <a href="/e/#{name}/down/omcv">↓</a></td><td>#{ptsomcv}</td><td>#{rolomcv}</td></tr>
-      <tr><td>#{valdmcv}</td><td>DMCV <a href="/e/#{name}/up/dmcv">↑</a> <a href="/e/#{name}/down/dmcv">↓</a></td><td>#{ptsdmcv}</td><td>#{roldmcv}</td></tr>
-      <tr><td>#{valspd}</td><td>SPD <a href="/e/#{name}/up/spd">↑</a> <a href="/e/#{name}/down/spd">↓</a></td><td>#{ptsspd}</td><td>#{rolspd}</td></tr>
-      <tr><td>#{valpd}</td><td>PD <a href="/e/#{name}/up/pd">↑</a> <a href="/e/#{name}/down/pd">↓</a></td><td>#{ptspd}</td><td>#{rolpd}</td></tr>
-      <tr><td>#{valed}</td><td>ED <a href="/e/#{name}/up/ed">↑</a> <a href="/e/#{name}/down/ed">↓</a></td><td>#{ptsed}</td><td>#{roled}</td></tr>
-      <tr><td>#{valrec}</td><td>REC <a href="/e/#{name}/up/rec">↑</a> <a href="/e/#{name}/down/rec">↓</a></td><td>#{ptsrec}</td><td>#{rolrec}</td></tr>
-      <tr><td>#{valend}</td><td>END <a href="/e/#{name}/up/end">↑</a> <a href="/e/#{name}/down/end">↓</a></td><td>#{ptsend}</td><td>#{rolend}</td></tr>
-      <tr><td>#{valbody}</td><td>BODY <a href="/e/#{name}/up/body">↑</a> <a href="/e/#{name}/down/body">↓</a></td><td>#{ptsbody}</td><td>#{rolbody}</td></tr>
-      <tr><td>#{valstun}</td><td>STUN <a href="/e/#{name}/up/stun">↑</a> <a href="/e/#{name}/down/stun">↓</a></td><td>#{ptsstun}</td><td>#{rolstun}</td></tr>
+      +statrow("str")
+      +statrow("dex")
+      +statrow("con")
+      +statrow("int")
+      +statrow("ego")
+      +statrow("pre")
+      +statrow("ocv")
+      +statrow("dcv")
+      +statrow("omcv")
+      +statrow("dmcv")
+      +statrow("spd")
+      +statrow("pd")
+      +statrow("ed")
+      +statrow("rec")
+      +statrow("end")
+      +statrow("body")
+      +statrow("stun")
     </table>
     <hr>
     <table>
@@ -37,9 +45,9 @@ html
     <table>
       <tr>Current Status</tr>
       <tr><td>Stat</td><td>Maximum</td><td>Current</td></tr>
-      <tr><td>END</td><td>#{valend}</td><td>#{end}</td></tr>
-      <tr><td>BODY</td><td>#{valbody}</td><td>#{body}</td></tr>
-      <tr><td>STUN</td><td>#{valstun}</td><td>#{stun}</td></tr>
+      <tr><td>END</td><td class="valend"></td><td>#{end}</td></tr>
+      <tr><td>BODY</td><td class="valbody"></td><td>#{body}</td></tr>
+      <tr><td>STUN</td><td class="valstun"></td><td>#{stun}</td></tr>
     </table>
     <hr>
     <table>
@@ -48,3 +56,6 @@ html
       <tr><td>Lift </td><td>#{liftwg}</td></tr>
     </table>
     <hr>
+    <script>
+    include sheet.js
+    </script>

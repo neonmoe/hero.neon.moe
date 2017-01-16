@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/c/:cid", character.display);
-app.get("/e/:cid/:action/:stat", character.edit);
+app.put("/e/:cid/:action/:stat", character.edit);
 
 app.get("/*", (req, res) => {
   res.render("404", {});
