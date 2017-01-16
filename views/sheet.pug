@@ -1,61 +1,196 @@
-mixin statrow(stat)
-  <tr>
-    <td class="val#{stat}">?</td>
-    <td>#{stat} <a onclick="increaseStat('#{stat}')">↑</a> <a onclick="decreaseStat('#{stat}')">↓</a></td>
-    <td class="pts#{stat}">?</td>
-    <td class="rol#{stat}"></td>
-  </tr>
+mixin statrow(stat, statname, desc)
+  <div class="flexed-statblock">
+    <div class="nameplate flex-size-7">
+      <div class="flex-center name" title="#{desc}">
+        <p>#{statname}</p>
+      </div>
+    </div>
+    <div class="flex-center valuefield flex-size-1">
+      <p class="rol#{stat}" />
+    </div>
+    <div class="flex-center valuefield flex-size-1">
+      <p class="val#{stat}" />
+    </div>
+    <div class="flex-center positive button flex-size-1" onclick="increaseStat('#{stat}')">
+      <p>+</p>
+    </div>
+    <div class="flex-center valuefield flex-size-1">
+      <p class="pts#{stat}" />
+    </div>
+    <div class="flex-center negative button flex-size-1" onclick="decreaseStat('#{stat}')">
+      <p>-</p>
+    </div>
+  </div>
 
 html
   head
     title Sheet for #{name}
     style
-      include style.css
+      include main.css
   body
-    h1#charactername #{name}
-    <hr>
-    <table>
-      <tr>Characteristics</tr>
-      <tr><td>Val</td><td>Char</td><td>Points</td><td>Roll</td></tr>
-      +statrow("str")
-      +statrow("dex")
-      +statrow("con")
-      +statrow("int")
-      +statrow("ego")
-      +statrow("pre")
-      +statrow("ocv")
-      +statrow("dcv")
-      +statrow("omcv")
-      +statrow("dmcv")
-      +statrow("spd")
-      +statrow("pd")
-      +statrow("ed")
-      +statrow("rec")
-      +statrow("end")
-      +statrow("body")
-      +statrow("stun")
-    </table>
-    <hr>
-    <table>
-      <tr>Experience</tr>
-      <tr><td>Spent:</td><td>#{spentexp}</td></tr>
-      <tr><td>Total:</td><td>#{totalexp}</td></tr>
-    </table>
-    <hr>
-    <table>
-      <tr>Current Status</tr>
-      <tr><td>Stat</td><td>Maximum</td><td>Current</td></tr>
-      <tr><td>END</td><td class="valend"></td><td>#{end}</td></tr>
-      <tr><td>BODY</td><td class="valbody"></td><td>#{body}</td></tr>
-      <tr><td>STUN</td><td class="valstun"></td><td>#{stun}</td></tr>
-    </table>
-    <hr>
-    <table>
-      <tr>Vital Information</tr>
-      <tr><td>HTH Damage</td><td>#{hthdmg}</td></tr>
-      <tr><td>Lift </td><td>#{liftwg}</td></tr>
-    </table>
-    <hr>
+    <div class="character-sheet ">
+      <div class="name-header block">
+        <p><i>The sheet of</i></p>
+        h1#charactername #{name}
+        <h3>Destroyer of worlds</h3>
+      </div>
+      <div class="stats-content block">
+        <div class="column">
+          <div class="flexed-statblock">
+            <div class="title flex-center flex-size-7">
+              <p>Characteristics</p>
+            </div>
+            <div class="flex-center flex-size-1">
+              <p class="icon" title="Roll">🎲</p>
+            </div>
+              <div class="flex-center flex-size-1">
+              <p class="icon" title="Total">= </p>
+            </div>
+            <div class="flex-center flex-size-3">
+              <p class="icon" title="Points">💯</p>
+            </div>
+          </div>
+          +statrow("str", "Strength", "Strength is streangth 💪, dummy!")
+          +statrow("dex", "Dexterity", "Makes you dexterous and fast! 🏃")
+          +statrow("con", "Constitution", "Makes you healthy and hardy! ❤️️")
+          +statrow("int", "Intelligence", "Make you smart! 💡")
+          +statrow("ego", "Ego", "Character's mental strength and willpower 😏")
+          +statrow("pre", "Presence", "Makes you charismatic 🎸")
+          +statrow("ocv", "Offensive Combat Value", "You'll be able to hit easier with higher accuracy! 🗡️")
+          +statrow("dcv", "Defensive Combat Value", "Others won't be able to hit you 💃")
+          +statrow("omcv", "Offensive Mental Combat Value", "Makes you an intense starer 👀")
+          +statrow("dmcv", "Defensive Mental Combat Value", "You'll be better dodging difficult questions 🙃")
+          +statrow("spd", "Speed", "Makes you fast like a horse! 🐎")
+          +statrow("pd", "Physical Defense", "Makes you a tough bastard! 🛡")
+          +statrow("ed", "Energy Defense", "Protects you from electricity/fire or other energy attacks 🤖")
+          +statrow("rec", "Recovery", "You'll be able to recover faster 💞")
+          +statrow("end", "Endurance", "Makes you able to endure the toughest situations! 🚴")
+          +statrow("body", "Body", "makes your body endure more suffering 🤒")
+          +statrow("stun", "Stun", "Makes your head withstand more before getting stunned 🤕")
+        </div>
+        <div class="column">
+          <div class="flexed-statblock">
+            <div class="title flex-center flex-size-7">
+              <p>Experience Points</p>
+            </div>
+            <div class="flex-center flex-size-1">
+              <p class="icon" title="Total">✨</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Total experience gained">
+                <p>Total</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{totalexp}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Total experience spent">
+                <p>Spent</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{spentexp}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="title flex-center flex-size-7">
+              <p>Current Status</p>
+            </div>
+            <div class="flex-center flex-size-1">
+              <p class="icon" title="Current/Total">❤️️</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Current Endurance Status / Maximum Endurance Status">
+                <p>Endurance</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{end}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Current Body Status / Maximum Body Status">
+                <p>Body</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{body}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Current Stun Status / Maximum Stun Status">
+                <p>Stun</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{stun}</p>
+            </div>
+          </div>
+
+
+          <div class="flexed-statblock">
+            <div class="title flex-center flex-size-7">
+              <p>Strength Information</p>
+            </div>
+            <div class="flex-center flex-size-1">
+              <p class="icon" title="Total">💪️</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="Damage roll for Hand-to-hand combat">
+                <p>Hand-to-Hand Damage</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{hthdmg}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="nameplate flex-size-7">
+              <div class="flex-center name" title="The weight limit for lifting.">
+                <p>Lift</p>
+              </div>
+            </div>
+            <div class="flex-center valuefield flex-size-1">
+              <p>#{liftwg}</p>
+            </div>
+          </div>
+
+          <div class="flexed-statblock">
+            <div class="title flex-center flex-size-7">
+              <p>Description</p>
+            </div>
+            <div class="flex-center flex-size-1">
+              <p class="icon" title="Description">💬️</p>
+            </div>
+          </div>
+
+          <div class="statblock-3">
+            <div class="input-stuffer">
+              <textarea></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
     include sheet.js
     </script>

@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@font-face {
+   font-family: emojione;
+   src: url("emojione-svg.woff2") format("woff2");
+}
+
+$primary-color: #2f2f36;
+$positive: rgb(83, 144, 76);
+$negative: rgb(133, 60, 60);
+
+html, body {
+   font-family: Roboto, Helvetica, sans-serif;
+   width: 100%;
+   height: 100%;
+   margin: 0;
+   padding: 0;
+   background-color: $primary-color - #0e0e0e;
+   color: rgb(204, 205, 219);
+}
+
+
+.character-sheet {
+   min-height: 100%;
+   width: 60%;
+   min-width: 900px;
+   margin: auto;
+   background-color: $primary-color;
+
+   .block {
+      width: 100%;
+   }
+
+   .name-header {
+      height: 15%;
+      min-height: 130px;
+      text-align: center;
+      background-color: $primary-color - #090909;
+
+      p {
+         margin: 0;
+      }
+
+      h1 {
+         margin: 0;
+         font-size: 4em;
+      }
+
+      h3 {
+         font-style: italic;
+         margin: 0em;
+      }
+   }
+
+   .stats-content {
+      white-space: nowrap;
+      margin: 0;
+      font-size: 1.2em;
+      display: flex;
+
+      .title {
+         //height: 100%;
+         font-size: 0.9em;
+         font-style: italic;
+         font-weight: bold;
+         background-color: $primary-color + #080808 !important;
+         width: 100%;
+         border-top: 3px solid $primary-color + #0f0f0f;
+
+         p {
+            padding-left: 1em;
+         }
+      }
+
+      .icon {
+         background-color: $primary-color + #080808;
+         text-align: center;
+         font-family: emojione;
+         height: 100%;
+         -webkit-user-select: none; /* Chrome/Safari */
+         -moz-user-select: none; /* Firefox */
+         -ms-user-select: none; /* IE10+ */
+         cursor: default;
+         border-top: 3px solid $primary-color + #0f0f0f;
+      }
+
+      .column {
+         margin: 0;
+         width: calc(50% - 0px);
+         display: inline-block;
+
+         @for $i from 1 through 40 {
+            .statblock:nth-child(#{$i * 2 - 1}):not(.title) {
+               background-color: $primary-color + #070707 !important;
+
+               .positive, .negative {
+                  background-color: $primary-color + #0a0a0a !important;
+               }
+            }
+         }
+
+         .statblock {
+            background-color: $primary-color + #040404;
+            height: 3%;
+            min-height: 30px;
+
+            @mixin flex-size-x {
+               @for $i from 1 through 10 {
+                  .flex-size-#{$i} { flex: $i; }
+               }
+            }
+            @include flex-size-x;
+
+            .nameplate {
+               height: 100%;
+               display: inline-flex;
+
+               .name {
+                  margin-left: 1em;
+                  cursor: help;
+               }
+            }
+
+            .title {
+               height: 100%;
+            }
+
+            .valuefield {
+               @extend .button;
+               background-color: inherit;
+               display: inline-flex;
+            }
+
+            .button {
+               //height: 100%;
+               text-align: center;
+               -webkit-user-select: none; /* Chrome/Safari */
+               -moz-user-select: none; /* Firefox */
+               -ms-user-select: none; /* IE10+ */
+               cursor: default;
+            }
+
+            .positive {
+               background-color: $primary-color + #070707;;
+               color: $positive;
+               font-weight: 600;
+               transition: 0.1s;
+
+            }
+            .positive.button:hover {
+               background-color: $positive + #333;
+               cursor: pointer;
+            }
+
+            .negative {
+               background-color: $primary-color + #070707;
+               color: $negative;
+               font-weight: 600;
+               transition: 0.1s;
+            }
+            .negative.button:hover {
+               background-color: $negative + #333;
+               cursor: pointer;
+            }
+
+            .input-stuffer {
+               width: 100%;
+               height: 100%;
+
+               textarea {
+                  resize: none;
+                  width: calc(100% - 1em);
+                  height: calc(100% - 1em);
+                  margin: 0;
+                  padding: 0.5em;
+                  border: none;
+                  font-family: Roboto, Helvetica, sans-serif;
+                  background-color: $primary-color + #040404;
+                  color: inherit;
+                  transition: 0.10s;
+               }
+               textarea:hover {
+                  background-color: $primary-color + #060606;
+               }
+            }
+
+         }
+
+         .flexed-statblock {
+            @extend .statblock;
+            display: flex;
+            flex-direction: row;
+
+            .title {
+               height: auto;
+            }
+         }
+
+         @mixin statblock-x {
+            @for $i from 2 through 3 {
+               .statblock-#{$i} {
+                  @extend .statblock;
+
+                  height: 3% * $i;
+                  min-height: 30px * $i;
+               }
+            }
+         }
+         @include statblock-x;
+
+         :last-child {
+            margin: 0;
+         }
+      }
+
+
+   }
+   @media (max-width: 700px) {
+      .stats-content {
+         display: block;
+
+         .column {
+            width: 100%;
+            display:block;
+         }
+
+         :last-child {
+            margin-left: 0px;
+         }
+      }
+   }
+}
+
+.flex-center {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+
+@media (max-width: 900px) {
+   .character-sheet {
+      width: 100%;
+      min-width: 0px;
+   }
+}
+
+::selection {
+   background: $primary-color + #333; /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+  background: $primary-color + #333; /* Gecko Browsers */
+}
