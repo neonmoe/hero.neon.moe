@@ -46,7 +46,7 @@ module.exports = {
     let character = world.getCharacter(charname);
     res.render("sheet", {
       name: character.name,
-      pronoun: character.pronoun[0].toUpperCase() + character.pronoun.substring(1),
+      pronoun: character.subjectpronoun[0].toUpperCase() + character.subjectpronoun.substring(1),
       str: character.str,
       dex: character.dex,
       int: character.int,
@@ -61,7 +61,7 @@ module.exports = {
       switch (action) {
         case "gender":
           character.subjectpronoun = character.subjectpronoun == "she" ? "he" : "she";
-          character.objectpronoun = character.objectpronoun == "her" ? "him" : "her";
+          character.objectpronoun = character.objectpronoun == "her" ? "his" : "her";
           break;
         case "strup":
           character.str += 1;
