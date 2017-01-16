@@ -70,7 +70,7 @@ let requestUpdateStat = (stat, action) => {
     operateStat(stat, req.response);
   };
   req.addEventListener("load", listener);
-  req.open("PUT", "http://" + window.location.host + "/e/" + characterName + "/" + action + "/" + stat);
+  req.open("PUT", "http://" + window.location.host + "/e/" + characterName + "/" + action + "/" + stat, true);
   req.send();
 };
 
