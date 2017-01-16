@@ -8,3 +8,12 @@ html
     p #{description}
     h3 List of all characters that exist on the current world:
     p #{charlist}
+
+    if authorized
+      p You're authorized! Visit /a to view your auth token.
+    else
+      button(onclick="genuser()") Generate new user
+
+    <script>
+    include index.js
+    </script>
