@@ -18,6 +18,17 @@ const characteristicValues = {
   "body": [10, 1, 1, false],
   "stun": [20, 1, 2, false]
 };
+const strengthLiftValues = [0, 8, 16, 25, 38, 50, 50, 50, 75, 75, 100, 100,
+  100, 150, 150, 200, 200, 200, 300, 300, 400, 400, 500, 600, 600, 800, 800,
+  800, 1200, 1200, 1600, 1600, 1600, 1600, 1600, 3200, 3200, 3200, 3200,
+  3200, 6400, 6400, 6400, 6400, 6400, 12500, 12500, 12500, 12500, 12500,
+  25000, 25000, 25000, 25000, 25000, 50000, 50000, 50000, 50000, 50000,
+  100000, 100000, 100000, 100000, 100000, 200000, 200000, 200000, 200000,
+  200000, 400000, 400000, 400000, 400000, 400000, 800000, 800000, 800000,
+  800000, 800000, 1600000, 1600000, 1600000, 1600000, 1600000, 3200000,
+  3200000, 3200000, 3200000, 3200000, 6400000, 6400000, 6400000, 6400000,
+  6400000, 12500000, 12500000, 12500000, 12500000, 12500000, 25000000,
+  25000000, 25000000, 25000000]
 
 class Character {
   constructor(name) {
@@ -41,6 +52,15 @@ class Character {
   getCharacteristicValue(name) {
     let vals = characteristicValues[name];
     return Math.round(vals[0] + this.characteristicPoints[name] / vals[1] * vals[2]);
+  }
+
+  getHTHDamage() {
+    // "Round" to halves
+    return Math.floor((this.getCharacteristicValue("str") / 5) * 2) / 2;
+  }
+
+  getLiftWeight() {
+    return strengthLiftValues[Math.max(0, Math.min(strengthLiftValues.length - 1, this.getCharacteristicValue("str")))];
   }
 
   spentExp() {
@@ -70,12 +90,12 @@ class World {
   }
 
   createCharacter(name) {
-    this.characters.push(new Character(name));
+    this.characters.push(new Character(name[0].toUpperCase() + name.substring(1)));
     this.characternames.push(name.toLowerCase());
   }
 
   getCharacter(name) {
-    return this.characters[this.characternames.indexOf(name)];
+    return this.characters[this.characternames.indexOf(name.toLowerCase())];
   }
 }
 
@@ -106,6 +126,11 @@ module.exports = {
     });
     sheet["spentexp"] = character.spentExp();
     sheet["totalexp"] = character.experience;
+    sheet["end"] = character.status.end;
+    sheet["body"] = character.status.body;
+    sheet["stun"] = character.status.stun;
+    sheet["hthdmg"] = character.getHTHDamage();
+    sheet["liftwg"] = character.getLiftWeight();
     res.render("sheet", sheet);
   },
 
