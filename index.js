@@ -14,7 +14,9 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/c/:cid", character.display);
+app.get("/v/:cid", character.view);
+app.get("/c/:cid", character.create);
+app.get("/c/:cid/:confirm", character.create);
 app.put("/e/:cid/:action/:stat", character.edit);
 
 app.get("/emojifont", (req, res) => {

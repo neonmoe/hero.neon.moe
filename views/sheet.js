@@ -59,7 +59,6 @@ let operateStat = (stat, newPoints) => {
     document.querySelectorAll(".val" + stat).forEach(e => e.innerHTML = newValue);
     document.querySelectorAll(".rol" + stat).forEach(e => { if (rollable.indexOf(stat) != -1) e.innerHTML = newRoll; });
   } else {
-    console.log("Set " + stat + " to " + newPoints + ".");
     document.querySelectorAll("." + stat).forEach(e => e.innerHTML = newPoints);
   }
 }

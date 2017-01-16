@@ -104,20 +104,31 @@ world.createCharacter("Beep");
 world.createCharacter("Zuup");
 
 module.exports = {
-  display: (req, res) => {
+  view: (req, res) => {
     let charname = req.params.cid.toLowerCase();
-    if (!world.characterExists(charname)) {
-      if (!world.spaceInWorld()) {
-        res.render("fullworld");
-        return;
-      }
-      world.createCharacter(req.params.cid);
+    if (world.characterExists(charname)) {
+      res.render("sheet", {name: world.getCharacter(charname).name});
+    } else {
+      res.redirect("/c/" + req.params.cid);
     }
-    let character = world.getCharacter(charname);
-    let sheet = {
-      name: character.name,
-    };
-    res.render("sheet", sheet);
+  },
+
+  create: (req, res) => {
+    let charname = req.params.cid.toLowerCase();
+    if (world.characterExists(charname)) {
+      res.redirect("/v/" + req.params.cid);
+    } else if (!req.params.confirm) {
+      res.render("createcharacter", {name: req.params.cid});
+    } else {
+      if (!world.characterExists(charname)) {
+        if (!world.spaceInWorld()) {
+          res.render("fullworld");
+          return;
+        }
+        world.createCharacter(req.params.cid);
+      }
+      res.redirect("/v/" + req.params.cid);
+    }
   },
 
   edit: (req, res) => {
