@@ -5,6 +5,7 @@ html
       include style.css
   body
     h1 Sheet for #{name}
+    <hr>
     <table>
       <tr>Characteristics</tr>
       <tr><td>Val</td><td>Char</td><td>Points</td><td>Roll</td></tr>
@@ -26,3 +27,10 @@ html
       <tr><td>#{valbody}</td><td>BODY <a href="/e/#{name}/up/body">↑</a> <a href="/e/#{name}/down/body">↓</a></td><td>#{ptsbody}</td><td>#{rolbody}</td></tr>
       <tr><td>#{valstun}</td><td>STUN <a href="/e/#{name}/up/stun">↑</a> <a href="/e/#{name}/down/stun">↓</a></td><td>#{ptsstun}</td><td>#{rolstun}</td></tr>
     </table>
+    <hr>
+    <table>
+      <tr>Experience</tr>
+      <tr><td>Spent:</td><td>#{spentexp}</td></tr>
+      <tr><td>Total:</td><td>#{totalexp}</td></tr>
+    </table>
+    <hr>

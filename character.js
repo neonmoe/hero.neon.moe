@@ -1,28 +1,28 @@
-// Constants for the characteristics' point spending [base value, min points, value per min points]
+// Constants for the characteristics' point spending [base value, min points, value per min points, rollable]
 const characteristicValues = {
-  "str": [10, 1, 1],
-  "dex": [10, 2, 1],
-  "con": [10, 1, 1],
-  "int": [10, 1, 1],
-  "ego": [10, 1, 1],
-  "pre": [10, 1, 1],
-  "ocv": [3, 5, 1],
-  "dcv": [3, 5, 1],
-  "omcv": [3, 3, 1],
-  "dmcv": [3, 3, 1],
-  "spd": [2, 10, 1],
-  "pd": [2, 1, 1],
-  "ed": [2, 1, 1],
-  "rec": [4, 1, 1],
-  "end": [20, 1, 5],
-  "body": [10, 1, 1],
-  "stun": [20, 1, 2]
+  "str": [10, 1, 1, true],
+  "dex": [10, 2, 1, true],
+  "con": [10, 1, 1, true],
+  "int": [10, 1, 1, true],
+  "ego": [10, 1, 1, true],
+  "pre": [10, 1, 1, true],
+  "ocv": [3, 5, 1, false],
+  "dcv": [3, 5, 1, false],
+  "omcv": [3, 3, 1, false],
+  "dmcv": [3, 3, 1, false],
+  "spd": [2, 10, 1, false],
+  "pd": [2, 1, 1, false],
+  "ed": [2, 1, 1, false],
+  "rec": [4, 1, 1, false],
+  "end": [20, 1, 5, false],
+  "body": [10, 1, 1, false],
+  "stun": [20, 1, 2, false]
 };
 
 class Character {
   constructor(name) {
     this.name = name;
-    this.identities = [ name ];
+    this.identities = [name];
     this.playerName = name;
     this.characteristicPoints = {
       "str": 0, "dex": 0, "con": 0, "int": 0, "ego": 0, "pre": 0, "ocv": 0,
@@ -40,7 +40,17 @@ class Character {
 
   getCharacteristicValue(name) {
     let vals = characteristicValues[name];
-    return vals[0] + this.characteristicPoints[name] / vals[1] * vals[2];
+    return Math.round(vals[0] + this.characteristicPoints[name] / vals[1] * vals[2]);
+  }
+
+  spentExp() {
+    let total = 0;
+    Object.keys(this.characteristicPoints).forEach(key => total += this.characteristicPoints[key] * characteristicValues[key][1]);
+    return total;
+  }
+
+  availablePoints() {
+    return this.experience - this.spentExp();
   }
 }
 
@@ -90,8 +100,12 @@ module.exports = {
     Object.keys(characteristicValues).forEach((c) => {
       sheet["val" + c] = character.getCharacteristicValue(c);
       sheet["pts" + c] = character.characteristicPoints[c];
-      sheet["rol" + c] = (9 + Math.floor(character.getCharacteristicValue(c) / 5)) + "-";
+      if (characteristicValues[c][3]) {
+          sheet["rol" + c] = (9 + Math.floor(character.getCharacteristicValue(c) / 5)) + "-";
+      }
     });
+    sheet["spentexp"] = character.spentExp();
+    sheet["totalexp"] = character.experience;
     res.render("sheet", sheet);
   },
 
@@ -103,7 +117,9 @@ module.exports = {
       let character = world.getCharacter(charname);
       switch (action) {
         case "up":
-          character.characteristicPoints[stat]++;
+          if (character.availablePoints() >= characteristicValues[stat][1]) {
+            character.characteristicPoints[stat]++;
+          }
           break;
         case "down":
           character.characteristicPoints[stat]--;
