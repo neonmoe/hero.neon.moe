@@ -78,7 +78,7 @@ class World {
   constructor() {
     this.characters = [ ];
     this.characternames = [ ];
-    this.maxPopulation = 5;
+    this.maxPopulation = 64;
   }
 
   characterExists(name) {
@@ -143,6 +143,9 @@ module.exports = {
           break;
         case "down":
           character.characteristicPoints[stat] -= cost;
+          if (character.getCharacteristicValue(stat) < 0) {
+              character.characteristicPoints[stat] += cost;
+          }
           break;
       }
       response = "" + character.characteristicPoints[stat];
