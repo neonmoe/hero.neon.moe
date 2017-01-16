@@ -1,5 +1,9 @@
 html {
   font-family: sans;
-  color: white;
-  background-color: black;
+  color: #CCC;
+  background-color: #134;
+}
+
+a {
+  color: #EEE;
 }
