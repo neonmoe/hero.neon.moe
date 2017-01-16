@@ -18,6 +18,7 @@ const characteristicValues = {
   "body": [10, 1, 1, false],
   "stun": [20, 1, 2, false]
 };
+const rollable = ["str", "dex", "con", "int", "ego", "pre"];
 const strengthLiftValues = [0, 8, 16, 25, 38, 50, 50, 50, 75, 75, 100, 100,
   100, 150, 150, 200, 200, 200, 300, 300, 400, 400, 500, 600, 600, 800, 800,
   800, 1200, 1200, 1600, 1600, 1600, 1600, 1600, 3200, 3200, 3200, 3200,
@@ -51,7 +52,7 @@ let operateStat = (stat, newPoints) => {
   let newRoll = (9 + Math.floor(newValue / 5));
   document.querySelectorAll(".pts" + stat).forEach(e => e.innerHTML = newPoints);
   document.querySelectorAll(".val" + stat).forEach(e => e.innerHTML = newValue);
-  document.querySelectorAll(".rol" + stat).forEach(e => e.innerHTML = newRoll);
+  document.querySelectorAll(".rol" + stat).forEach(e => { if (rollable.indexOf(stat) != -1) e.innerHTML = newRoll; });
 }
 
 let requestUpdateStat = (stat, action) => {
