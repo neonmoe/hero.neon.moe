@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const character = require("./character.js");
+const path = require("path");
 
 app.set("view engine", "pug");
 
@@ -15,6 +16,10 @@ app.get("/", (req, res) => {
 
 app.get("/c/:cid", character.display);
 app.put("/e/:cid/:action/:stat", character.edit);
+
+app.get("/emojifont", (req, res) => {
+   res.sendFile(path.resolve("./") + "/views/emojione-svg.woff2");
+});
 
 app.get("/*", (req, res) => {
   res.render("404", {});
