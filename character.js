@@ -1,12 +1,46 @@
+// Constants for the characteristics' point spending [base value, min points, value per min points]
+const characteristicValues = {
+  "str": [10, 1, 1],
+  "dex": [10, 2, 1],
+  "con": [10, 1, 1],
+  "int": [10, 1, 1],
+  "ego": [10, 1, 1],
+  "pre": [10, 1, 1],
+  "ocv": [3, 5, 1],
+  "dcv": [3, 5, 1],
+  "omcv": [3, 3, 1],
+  "dmcv": [3, 3, 1],
+  "spd": [2, 10, 1],
+  "pd": [2, 1, 1],
+  "ed": [2, 1, 1],
+  "rec": [4, 1, 1],
+  "end": [20, 1, 5],
+  "body": [10, 1, 1],
+  "stun": [20, 1, 2]
+};
+
 class Character {
   constructor(name) {
     this.name = name;
-    this.subjectpronoun = "she";
-    this.objectpronoun = "her";
-    this.str = 10;
-    this.dex = 10;
-    this.int = 10;
+    this.identities = [ name ];
+    this.playerName = name;
+    this.characteristicPoints = {
+      "str": 0, "dex": 0, "con": 0, "int": 0, "ego": 0, "pre": 0, "ocv": 0,
+      "dcv": 0, "omcv": 0, "dmcv": 0, "spd": 0, "pd": 0, "ed": 0, "rec": 0,
+      "end": 0, "body": 0, "stun": 0
+    };
+    this.status = {
+      end: this.getCharacteristicValue("end"),
+      body: this.getCharacteristicValue("body"),
+      stun: this.getCharacteristicValue("stun"),
+    };
+    this.experience = 25;
     console.log("Created a character named " + name + "!");
+  }
+
+  getCharacteristicValue(name) {
+    let vals = characteristicValues[name];
+    return vals[0] + this.characteristicPoints[name] / vals[1] * vals[2];
   }
 }
 
@@ -14,10 +48,15 @@ class World {
   constructor() {
     this.characters = [ ];
     this.characternames = [ ];
+    this.maxPopulation = 5;
   }
 
   characterExists(name) {
-    return this.characters.map(c => c.name).indexOf(name) != -1;
+    return this.characternames.indexOf(name.toLowerCase()) != -1;
+  }
+
+  spaceInWorld() {
+    return this.characters.length < this.maxPopulation;
   }
 
   createCharacter(name) {
@@ -37,49 +76,37 @@ world.createCharacter("Zuup");
 module.exports = {
   display: (req, res) => {
     let charname = req.params.cid.toLowerCase();
-    let msg = "a newborn";
-    if (world.characterExists(charname)) {
-      msg = "a veteran";
-    } else {
+    if (!world.characterExists(charname)) {
+      if (!world.spaceInWorld()) {
+        res.render("fullworld");
+        return;
+      }
       world.createCharacter(req.params.cid);
     }
     let character = world.getCharacter(charname);
-    res.render("sheet", {
+    let sheet = {
       name: character.name,
-      pronoun: character.subjectpronoun[0].toUpperCase() + character.subjectpronoun.substring(1),
-      str: character.str,
-      dex: character.dex,
-      int: character.int,
+    };
+    Object.keys(characteristicValues).forEach((c) => {
+      sheet["val" + c] = character.getCharacteristicValue(c);
+      sheet["pts" + c] = character.characteristicPoints[c];
+      sheet["rol" + c] = (9 + Math.floor(character.getCharacteristicValue(c) / 5)) + "-";
     });
+    res.render("sheet", sheet);
   },
 
   edit: (req, res) => {
     let charname = req.params.cid.toLowerCase();
     if (world.characterExists(charname)) {
       let action = req.params.action;
+      let stat = req.params.stat;
       let character = world.getCharacter(charname);
       switch (action) {
-        case "gender":
-          character.subjectpronoun = character.subjectpronoun == "she" ? "he" : "she";
-          character.objectpronoun = character.objectpronoun == "her" ? "his" : "her";
+        case "up":
+          character.characteristicPoints[stat]++;
           break;
-        case "strup":
-          character.str += 1;
-          break;
-        case "strdown":
-          character.str -= 1;
-          break;
-        case "dexup":
-          character.dex += 1;
-          break;
-        case "dexdown":
-          character.dex -= 1;
-          break;
-        case "intup":
-          character.int += 1;
-          break;
-        case "intdown":
-          character.int -= 1;
+        case "down":
+          character.characteristicPoints[stat]--;
           break;
       }
     }
@@ -89,8 +116,8 @@ module.exports = {
   list: _ => {
     let characters = "";
     world.characters.forEach((c) => {
-      characters += c.name + ", whose strength is " + c.str + ", " + c.objectpronoun + " dexterity " + c.dex + ", and " + c.objectpronoun + " intelligence " + c.int + ". ";
+      characters += c.name + ", ";
     });
-    return characters;
+    return characters.substring(0, characters.length - 2) + ".";
   }
 }
