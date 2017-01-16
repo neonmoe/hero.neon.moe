@@ -31,6 +31,7 @@ html, body {
    }
 
    .name-header {
+      padding-top: 1em;
       height: 15%;
       min-height: 130px;
       text-align: center;
@@ -48,6 +49,44 @@ html, body {
       h3 {
          font-style: italic;
          margin: 0em;
+      }
+   }
+
+   .tabs {
+      width: 100%;
+      min-height: 60px;
+      height: auto;
+      display: flex;
+      flex-direction: row;
+
+      .tab {
+         background-color: $primary-color + #050505;
+         display: inline-flex;
+         flex: 2;
+         text-align: center;
+         transition: 0.15s;
+         border-top: 4px solid $primary-color + #080808;
+
+         h3 {
+            width: 100%;
+         }
+      }
+
+      .tab[data-active="true"] {
+         background-color: $primary-color + #080808;
+      }
+
+      .tab:hover {
+         background-color: $primary-color + #090909;
+         cursor: pointer !important;
+         -webkit-user-select: none; /* Chrome/Safari */
+         -moz-user-select: none; /* Firefox */
+         -ms-user-select: none; /* IE10+ */
+         cursor: default;
+      }
+
+      .tab[data-active="true"]:hover {
+         background-color: $primary-color + #0c0c0c;
       }
    }
 
@@ -177,15 +216,15 @@ html, body {
 
                textarea {
                   resize: none;
-                  width: calc(100% - 1em);
-                  height: calc(100% - 1em);
+                  width: 100%;
+                  height: 100%;
                   margin: 0;
                   padding: 0.5em;
                   border: none;
                   font-family: Roboto, Helvetica, sans-serif;
                   background-color: $primary-color + #040404;
                   color: inherit;
-                  transition: 0.10s;
+                  transition: 0.15s;
                }
                textarea:hover {
                   background-color: $primary-color + #060606;
