@@ -65,7 +65,7 @@ class Character {
 
   spentExp() {
     let total = 0;
-    Object.keys(this.characteristicPoints).forEach(key => total += this.characteristicPoints[key] * characteristicValues[key][1]);
+    Object.keys(this.characteristicPoints).forEach(key => total += this.characteristicPoints[key]);
     return total;
   }
 
@@ -134,14 +134,15 @@ module.exports = {
       let action = req.params.action;
       let stat = req.params.stat;
       let character = world.getCharacter(charname);
+      let cost = characteristicValues[stat][1];
       switch (action) {
         case "up":
-          if (character.availablePoints() >= characteristicValues[stat][1]) {
-            character.characteristicPoints[stat]++;
+          if (character.availablePoints() >= cost) {
+            character.characteristicPoints[stat] += cost;
           }
           break;
         case "down":
-          character.characteristicPoints[stat]--;
+          character.characteristicPoints[stat] -= cost;
           break;
       }
       response = "" + character.characteristicPoints[stat];

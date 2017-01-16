@@ -38,12 +38,12 @@ let getCharacteristicValueFromPoints = (name, points) => {
 }
 
 let increaseStat = (stat) => {
-  operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) + 1);
+  operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) + characteristicValues[stat][1]);
   requestUpdateStat(stat, "up");
 };
 
 let decreaseStat = (stat) => {
-  operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) - 1);
+  operateStat(stat, parseInt(document.querySelector(".pts" + stat).innerHTML) - characteristicValues[stat][1]);
   requestUpdateStat(stat, "down");
 };
 
