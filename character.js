@@ -1,7 +1,8 @@
 class Character {
   constructor(name) {
     this.name = name;
-    this.pronoun = "she";
+    this.subjectpronoun = "she";
+    this.objectpronoun = "her";
     this.str = 10;
     this.dex = 10;
     this.int = 10;
@@ -21,7 +22,7 @@ class World {
 
   createCharacter(name) {
     this.characters.push(new Character(name));
-    this.characternames.push(name);
+    this.characternames.push(name.toLowerCase());
   }
 
   getCharacter(name) {
@@ -30,15 +31,17 @@ class World {
 }
 
 let world = new World();
+world.createCharacter("Beep");
+world.createCharacter("Zuup");
 
 module.exports = {
   display: (req, res) => {
-    let charname = req.params.cid;
+    let charname = req.params.cid.toLowerCase();
     let msg = "a newborn";
     if (world.characterExists(charname)) {
       msg = "a veteran";
     } else {
-      world.createCharacter(charname);
+      world.createCharacter(req.params.cid);
     }
     let character = world.getCharacter(charname);
     res.render("sheet", {
@@ -51,14 +54,14 @@ module.exports = {
   },
 
   edit: (req, res) => {
-    let charname = req.params.cid;
+    let charname = req.params.cid.toLowerCase();
     if (world.characterExists(charname)) {
       let action = req.params.action;
-      console.log(action + " for " + charname + "!");
       let character = world.getCharacter(charname);
       switch (action) {
         case "gender":
-          character.pronoun = character.pronoun == "she" ? "he" : "she";
+          character.subjectpronoun = character.subjectpronoun == "she" ? "he" : "she";
+          character.objectpronoun = character.objectpronoun == "her" ? "him" : "her";
           break;
         case "strup":
           character.str += 1;
@@ -81,5 +84,13 @@ module.exports = {
       }
     }
     res.redirect("/c/" + charname);
+  },
+
+  list: _ => {
+    let characters = "";
+    world.characters.forEach((c) => {
+      characters += c.name + ", whose strength is " + c.str + ", " + c.objectpronoun + " dexterity " + c.dex + ", and " + c.objectpronoun + " intelligence " + c.int + ". ";
+    });
+    return characters;
   }
 }
