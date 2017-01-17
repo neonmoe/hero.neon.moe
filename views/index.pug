@@ -2,17 +2,20 @@ html
   head
   title #{title}
   style
-    include style.css
+    include styles/main.css
   body
-    h1 #{header}
-    p #{description}
-    h3 List of all characters that exist on the current world:
-    p #{charlist}
+    div(class="content")
+      header(class="block")
+        h1 #{header}
+      div(class="padded")
+        p #{description}
+        h3 List of all characters that exist on the current world:
+        p #{charlist}
 
-    if authorized
-      p You're authorized! Visit /a to view your auth token.
-    else
-      button(onclick="genuser()") Generate new user
+        if authorized
+          p You're authorized! Visit /a to view your auth token.
+        else
+          button(onclick="genuser()") Generate new user
 
     <script>
     include index.js

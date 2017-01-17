@@ -19,21 +19,30 @@ html, body {
 }
 
 
-.character-sheet {
+.content {
    min-height: 100%;
    width: 60%;
    min-width: 900px;
    margin: auto;
    background-color: $primary-color;
 
+   a {
+     color: rgb(59, 72, 187);
+     text-decoration: none;
+   }
+
+   .padded {
+     padding: 1em;
+   }
+
    .block {
       width: 100%;
    }
 
-   .name-header {
-      padding-top: 1em;
-      height: 15%;
-      min-height: 130px;
+   header {
+      padding-top: 2em;
+      padding-bottom: 2em;
+      height: auto;
       text-align: center;
       background-color: $primary-color - #090909;
 
@@ -285,7 +294,7 @@ html, body {
 }
 
 @media (max-width: 900px) {
-   .character-sheet {
+   .content {
       width: 100%;
       min-width: 0px;
    }

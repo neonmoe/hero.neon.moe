@@ -2,9 +2,12 @@ html
   head
   title #{title}
   style
-    include style.css
+    include styles/main.css
   body
-    h1 You're authorized!
-    p Your authorization token is #{token}, but it's saved in your cookies safely!
-    p Please keep it safe though in case you ever clear your cookies or need to authorisize from another cookie etc. You'll need it then!
-    a(href="/") Back to main page
+    div(class="content")
+      header(class="block")
+        h1 You're authorized!
+      div(class="padded")
+        p Your authorization token is #{token}, but it's saved in your cookies safely!
+        p Please keep it safe though in case you ever clear your cookies or need to authorisize from another cookie etc. You'll need it then!
+        a(href="/") Back to main page

@@ -2,7 +2,10 @@ html
   head
   title Nothing here!
   style
-    include style.css
+    include styles/main.css
   body
-    h2 You have walked into the wrong neighborhood, carry on.
-    a(href="/") Return to the homepage
+    div(class="content")
+      header(class="block")
+        h2 You have walked into the wrong neighborhood, carry on.
+      div(class="padded")
+        a(href="/") Return to the homepage

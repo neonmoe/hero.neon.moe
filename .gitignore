@@ -1,7 +1,7 @@
 node_modules
 *.~
-views/main.css
-views/.sass-cache
-views/main.css.map
+views/styles/main.css
+views/styles/.sass-cache
+views/styles/main.css.map
 .sass-cache
 js
