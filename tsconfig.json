@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "ts",
+    "outDir": "js"
+  },
+
+  "include": [
+    "ts/**/*"
+  ],
+
+  "exclude": [
+    "node_modules"
+  ]
+}

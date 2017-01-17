@@ -1,8 +1,9 @@
-const express = require("express");
-const path = require("path");
-const app = express();
+import * as express from "express";
+import * as path from "path";
+import {Authentication} from "./authentication";
 const character = require("./character.js");
-const authentication = require("./authentication.js");
+
+const app = express();
 
 app.set("view engine", "pug");
 
@@ -12,7 +13,7 @@ app.get("/", (req, res) => {
     header: "RPG Sheet Manager for HERO-likes",
     description: "This HERO-like RPG sheet manager is still under construction.",
     charlist: character.list(),
-    authorized: authentication.getAuthtoken(req) !== undefined
+    authorized: Authentication.getAuthtoken(req) !== undefined
   });
 });
 
@@ -20,8 +21,8 @@ app.get("/v/:cid", character.view);
 app.get("/c/:cid", character.create);
 app.get("/c/:cid/:confirm", character.create);
 app.put("/e/:cid/:action/:stat", character.edit);
-app.get("/a", authentication.view);
-app.post("/a/generate", authentication.generateUser);
+app.get("/a", Authentication.view);
+app.post("/a/generate", Authentication.generateUser);
 
 app.get("/emojifont", (req, res) => {
    res.sendFile(path.resolve("./") + "/views/emojione-svg.woff2");
