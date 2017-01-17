@@ -30,6 +30,28 @@ class UserDatabase {
   }
 }
 
+class PermissionList {
+  constructor() {
+    this.permittedTokens = [ ];
+  }
+
+  hasAccess(token) {
+    return this.permittedTokens.indexOf(token) >= 0;
+  }
+
+  givePermission(token) {
+    if (!this.hasAccess(token)) {
+      this.permittedTokens.push(token);
+    }
+  }
+
+  revokePermission(token) {
+    if (this.hasAccess(token)) {
+      this.permittedTokens.splice(this.permittedTokens.indexOf(token), 1);
+    }
+  }
+}
+
 var userDatabase = new UserDatabase();
 
 function getAuthtoken(req) {
@@ -63,5 +85,6 @@ module.exports = {
   },
   getAuthtoken: (req) => {
     return getAuthtoken(req);
-  }
+  },
+  PermissionList: PermissionList
 }
