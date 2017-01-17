@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
     header: "RPG Sheet Manager for HERO-likes",
     description: "This HERO-like RPG sheet manager is still under construction.",
     charlist: character.list(),
-    authorized: authentication.getAuthtoken(req) != ""
+    authorized: authentication.getAuthtoken(req) !== undefined
   });
 });
 
