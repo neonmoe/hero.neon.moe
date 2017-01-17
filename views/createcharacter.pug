@@ -2,8 +2,11 @@ html
   head
   title New Character?
   style
-    include styles/style.css
+    include styles/main.css
   body
-    h2 Are you sure you want to create the character "#{name}"?
-    <a href="/c/#{name}/confirm">Yes!</a><br>
-    <a href="/">Nah, return me to the index.</a>
+    div(class="content")
+      header(class="block")
+        h2 Are you sure you want to create the character "#{name}"?
+      div(class="padded")
+        <a href="/c/#{name}/confirm">Yes!</a><br>
+        <a href="/">Nah, return me to the index.</a>
