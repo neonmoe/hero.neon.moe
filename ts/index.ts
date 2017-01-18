@@ -23,6 +23,7 @@ app.get("/c/:cid/:confirm", character.create);
 app.put("/e/:cid/:action/:stat", character.edit);
 app.get("/a", Authentication.view);
 app.post("/a/generate", Authentication.generateUser);
+app.get("/a/:handle", Authentication.view);
 
 app.get("/emojifont", (req, res) => {
    res.sendFile(path.resolve("./") + "/views/emojione-svg.woff2");
