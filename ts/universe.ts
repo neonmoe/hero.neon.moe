@@ -2,12 +2,11 @@ import Character from "./character";
 
 export module Universe {
   let worlds: {[key: string]: {[key: string]: Character}} = {};
-  let worldPopulationLimit = 3;
+  let worldPopulationLimit = 64;
 
   /** Just a convenience function, an "encoder" for the world and character names. */
   function convertNameToKey(name: string) {
-    // name -> lowercase -> filter out everything except alphanumeric and underscores (\w)
-    return name.toLowerCase().match(/\w/g).join("");
+    return name.toLowerCase().replace(" ", "-");
   }
 
   function getWorld(world: string) {
@@ -51,5 +50,11 @@ export module Universe {
 
   export function characterExists(world: string, name: string) {
     return worldExists(world) && Object.keys(getWorld(world)).indexOf(convertNameToKey(name)) != -1;
+  }
+
+  export function getCharacter(world: string, name: string) {
+    if (characterExists(world, name)) {
+      return getWorld(world)[convertNameToKey(name)];
+    }
   }
 }

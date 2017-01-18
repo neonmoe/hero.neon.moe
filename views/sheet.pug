@@ -6,16 +6,16 @@ mixin statrow(stat, statname, desc)
       </div>
     </div>
     <div class="flex-center valuefield flex-size-1">
-      <p class="rol#{stat}" />
+      <p class="roll-for-#{stat}" />
     </div>
     <div class="flex-center valuefield flex-size-1">
-      <p class="val#{stat}" />
+      <p class="values-for-#{stat}" />
     </div>
     <div class="flex-center positive button flex-size-1" onclick="increaseStat('#{stat}')">
       <p>+</p>
     </div>
     <div class="flex-center valuefield flex-size-1">
-      <p class="pts#{stat}" />
+      <p class="points-for-#{stat}" />
     </div>
     <div class="flex-center negative button flex-size-1" onclick="decreaseStat('#{stat}')">
       <p>-</p>
@@ -217,6 +217,8 @@ html
         </div>
       </div>
     </div>
-    <script>
-    include sheet.js
+    <script>var exports = {};
+      include ../js/netdb.js
+      include ../js/characterUtils.js
+      include sheet.js
     </script>

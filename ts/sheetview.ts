@@ -30,7 +30,14 @@ export module Sheetview {
     }
   }
 
-  export function edit(req: Express.Request, res: Express.Response) {
-
+  export function edit(req: express.Request, res: express.Response) {
+    let world = req.params.world;
+    let name = req.params.name;
+    if (Universe.characterExists(world, name)) {
+      if (req.params.action == "sync") {
+        let value = Universe.getCharacter(world, name).database.getNewValues(parseInt(req.params.value));
+        res.send(value);
+      }
+    }
   }
 }

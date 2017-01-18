@@ -9,11 +9,21 @@ export default class NetDB {
     return Date.now();
   }
 
+  get(key: string) {
+    return this.values[key];
+  }
+
   updateValue(key: string, value: any, syncTime: number = NetDB.getTime()) {
-    if (this.syncTimes[key] < syncTime) {
+    if (Object.keys(this.values).indexOf(key) == -1 || this.syncTimes[key] < syncTime) {
       this.syncTimes[key] = syncTime;
       this.values[key] = value;
     }
+  }
+
+  updateValues(newValues: {[key: string]: any}, newTime: number) {
+    Object.keys(newValues).forEach(key => {
+      this.updateValue(key, newValues[key], newTime);
+    });
   }
 
   getNewValues(previousSyncTime: number): {[key: string]: any} {

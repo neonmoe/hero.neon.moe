@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/c/:world/:name", Sheetview.view);
 app.get("/n/:world/:name", Sheetview.create);
-app.put("/e/:world/:name/:action/:stat", Sheetview.edit);
+app.get("/e/:world/:name/:action/:value", Sheetview.edit);
 app.get("/a", Authentication.view);
 app.post("/a/generate", Authentication.generateUser);
 
@@ -30,9 +30,8 @@ app.get("/*", (req, res) => {
 });
 
 app.listen(8863, _ => {
-  console.log("--- hero.neon.moe init ---");
+  console.log("Firing up hero.neon.moe...");
   Universe.createWorld("DBL");
   Universe.createCharacter("DBL", "Bob");
-  console.log("--- hero.neon.moe init over ---");
   console.log("Ready to rock and roll on port 8863!");
 });
