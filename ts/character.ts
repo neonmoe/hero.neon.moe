@@ -12,5 +12,9 @@ export default class Character {
     Object.keys(CharacterUtils.characteristicValues).forEach(stat => {
       this.database.updateValue(stat, 0);
     });
+    this.database.updateValue("exp", 50);
+    this.database.updateValue("current-end", 50);
+    this.database.updateValue("current-body", 50);
+    this.database.updateValue("current-stun", 50);
   }
 }

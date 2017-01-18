@@ -6,16 +6,34 @@ var netdb = new NetDB();
 update(0);
 
 function updateFrontend() {
-  Object.keys(netdb.values).forEach((stat) => {
-    document.querySelectorAll(".points-for-" + stat).forEach((elem) => {
-      elem.innerHTML = netdb.values[stat];
-    });
-    document.querySelectorAll(".values-for-" + stat).forEach((elem) => {
-      elem.innerHTML = CharacterUtils.getValue(stat, netdb.values[stat]);
-    });
-    document.querySelectorAll(".roll-for-" + stat).forEach((elem) => {
-      elem.innerHTML = CharacterUtils.getRoll(netdb.values[stat]);
-    });
+  Object.keys(CharacterUtils.characteristicValues).forEach((stat) => {
+    if (Object.keys(netdb.values).indexOf(stat) != -1) {
+      updateClasses("points-for-" + stat, netdb.get(stat));
+      updateClasses("value-for-" + stat, CharacterUtils.getValue(stat, netdb.get(stat)));
+      updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb.get(stat)));
+    }
+  });
+
+  let totalExp = netdb.get("exp");
+  let spentExp = CharacterUtils.getSpentExperience(netdb.values);
+  console.log("Total exp: " + totalExp);
+  console.log("Spent exp: " + spentExp);
+  updateClasses("total-exp", totalExp);
+  updateClasses("spent-exp", spentExp);
+  updateClasses("unspent-exp", totalExp - spentExp);
+
+  updateClasses("hand-to-hand-dmg", CharacterUtils.getHTHDmg(netdb.get("str")));
+  updateClasses("lift-weight", CharacterUtils.getLift(netdb.get("str")));
+
+  // NOTE: These seem very automatable, consider in future if more values like these pop up
+  updateClasses("current-end", netdb.get("current-end"));
+  updateClasses("current-body", netdb.get("current-body"));
+  updateClasses("current-stun", netdb.get("current-stun"));
+}
+
+function updateClasses(name, value) {
+  document.querySelectorAll("." + name).forEach(elem => {
+    elem.innerHTML = value;
   });
 }
 
@@ -31,4 +49,4 @@ function update(time) {
 
 window.setInterval(function (_) {
     update(NetDB.getTime());
-}, 500);
+}, 5000);
