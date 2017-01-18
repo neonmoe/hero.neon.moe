@@ -1,5 +1,6 @@
 import * as express from "express";
 import {Universe} from "./universe";
+import CharacterUtils from "./characterUtils";
 
 export module Sheetview {
   export function view(req: express.Request, res: express.Response) {
@@ -30,13 +31,25 @@ export module Sheetview {
     }
   }
 
-  export function edit(req: express.Request, res: express.Response) {
+  export function action(req: express.Request, res: express.Response) {
     let world = req.params.world;
     let name = req.params.name;
     if (Universe.characterExists(world, name)) {
-      if (req.params.action == "sync") {
-        let value = Universe.getCharacter(world, name).database.getNewValues(parseInt(req.params.value));
-        res.send(value);
+      let netdb = Universe.getCharacter(world, name).database;
+      switch (req.params.action) {
+        case "update-stat":
+          let args = req.params.value.split("-");
+          let stat = args[1];
+          if (args[0] == "up") {
+            CharacterUtils.increaseStat(netdb, stat);
+          } else {
+            CharacterUtils.decreaseStat(netdb, stat);
+          }
+          break;
+        case "sync":
+          let value = netdb.getNewValues(parseInt(req.params.value));
+          res.send(value);
+          break;
       }
     }
   }
