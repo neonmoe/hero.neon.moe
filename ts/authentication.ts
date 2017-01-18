@@ -192,13 +192,13 @@ export module Authentication {
 
   export function editHandle(req, res) {
     let authtoken = getAuthtoken(req);
+    let oldHandle = userDatabase.getUser(authtoken).handle;
     let handle = req.params.handle
     if (!authtoken) {
       res.status(403);
       res.send("Not authorisized.");
     } else if (userDatabase.changeHandle(authtoken, handle)) {
-      console.log(userDatabase.handles)
-      console.log(userDatabase.getUser(authtoken))
+      console.log(`${oldHandle} is now known as ${handle}`);
       res.status(200);
       res.send("Success.");
     } else {
