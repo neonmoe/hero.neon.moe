@@ -1,27 +1,14 @@
+import * as express from "express";
+import Namer from "./namer";
+
 export module Authentication {
-  const chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f'];
-  const rndWrds = {
-    adje:
-      ['annoying', 'hairy', 'gross', 'funny','dark',
-      'sloppy', 'slippy', 'fat', 'slim', 'yellow', 'blue', 'red',
-      'green', 'complex', 'smart', 'dumb', 'late', 'early', 'tall', 'long',
-      'caffeinated'],
-    verb: [
-      'jumping',  'speaking', 'yelling', 'levitating', 'raging',
-      'shaking', 'booping', 'running', 'walking', 'coding', 'galloping',
-      'cantering', 'trotting', 'sitting', 'standing', 'h4x0r1ng'],
-    noun:
-      ['banana', 'monkey', 'gorilla', 'giraffe', 'zebra', 'donkey',
-      'computer', 'hat', 'tophat', 'phone', 'table', 'human', 'sofa',
-      'badger', 'snake', 'orange', 'apple', 'dog', 'cat', 'chimpanzee']
-  };
 
   class User {
 
     token: string;
     handle: string;
 
-    constructor(token, handle) {
+    constructor(token: string, handle: string) {
       this.token = token;
       this.handle = handle;
       console.log(`User ${handle} has been generated with token ${token}!`);
@@ -47,21 +34,14 @@ export module Authentication {
       this.handles = { };
     }
 
-    generateNewUser() {
+    generateNewUser(): User {
       let token;
       do {
-        token = Array.apply(null, new Array(10)).map(c => chars[Math.floor(Math.random() * chars.length)]).join('');
+        token = Namer.generateHexString(10);
       } while (token in this.users)
       let handle;
       do {
-        let adj = rndWrds.adje[Math.floor(Math.random() * rndWrds.adje.length)];
-        adj = adj[0].toUpperCase() + adj.substring(1, adj.length);
-        let verb = rndWrds.verb[Math.floor(Math.random() * rndWrds.verb.length)];
-        verb = verb[0].toUpperCase() + verb.substring(1, verb.length);
-        let noun = rndWrds.noun[Math.floor(Math.random() * rndWrds.noun.length)];
-        noun = noun[0].toUpperCase() + noun.substring(1, noun.length);
-
-        handle = adj + verb + noun;
+        handle = Namer.generateRandomName();
 
       } while (this.handleExistsCaseInsensitive(handle))
 
@@ -71,15 +51,15 @@ export module Authentication {
       return token;
     }
 
-    getUser(authtoken: string) {
+    getUser(authtoken: string): User {
       return this.users[authtoken];
     }
 
-    userExists(token) {
+    userExists(token: string): boolean {
       return token in this.users;
     }
 
-    handleExistsCaseInsensitive(handle: string) {
+    handleExistsCaseInsensitive(handle: string): boolean {
       let keys = Object.keys(this.handles);
       for (let i in keys) {
         if (handle.toLowerCase() == keys[i].toLowerCase()) {
@@ -89,7 +69,7 @@ export module Authentication {
       return false;
     }
 
-    changeHandle(token, newHandle): boolean {
+    changeHandle(token: string, newHandle: string): boolean {
       if (this.handleExistsCaseInsensitive(newHandle)) { return false; }
       let user = this.getUser(token);
       this.handles[newHandle.toLowerCase()] = token;
@@ -103,37 +83,48 @@ export module Authentication {
 
   class PermissionList {
 
-    permittedTokens: Array<String>;
+    counter: number;
+    permissions: {[id: string]: string[]};
+
+    permittedTokens: string[];
 
     constructor() {
-      this.permittedTokens = [ ];
+      this.counter = 0;
+      this.permissions = {};
     }
 
-    hasAccess(token) {
-      return this.permittedTokens.indexOf(token) >= 0;
-
+    new(): number {
+      let id = this.counter++;
+      this.permissions[id] = [];
+      return id;
     }
 
-    givePermission(token) {
-      if (!this.hasAccess(token)) {
-        this.permittedTokens.push(token);
+    has(id: number, token: string): boolean {
+      return this.permissions[id].indexOf(token) >= 0;
+    }
+
+    give(id: number, token: string) {
+      if (!this.has(id, token)) {
+        this.permissions[id].push(token);
       }
     }
 
-    revokePermission(token) {
-      if (this.hasAccess(token)) {
-        this.permittedTokens.splice(this.permittedTokens.indexOf(token), 1);
+    revoke(id: number, token: string) {
+      if (this.has(id, token)) {
+        this.permissions[id].splice(this.permissions[id].indexOf(token), 1);
       }
     }
   }
 
-  export function generateUser(req, res) {
+  export const permission = new PermissionList();
+
+  export function generateUser(req: express.Request, res: express.Response) {
     let token = userDatabase.generateNewUser();
     res.cookie('authtoken', token, {expires: new Date(Date.now() + 31536000000)});
     res.send(token);
   }
 
-  export function viewPublic(req, res) {
+  export function viewPublic(req: express.Request, res: express.Response) {
     let authtoken = getAuthtoken(req);
     let token = userDatabase.handles[req.params.handle.toLowerCase()];
     if (authtoken != token) {
@@ -143,7 +134,7 @@ export module Authentication {
     renderAccount(authtoken, false, res);
   }
 
-  export function view(req, res) {
+  export function view(req: express.Request, res: express.Response) {
     let authtoken = getAuthtoken(req);
     let priv = true;
     if (req.params.handle) {
@@ -165,7 +156,7 @@ export module Authentication {
     return;
   }
 
-  function renderAccount(authtoken: string, priv: boolean, res) {
+  function renderAccount(authtoken: string, priv: boolean, res: express.Response) {
     let handle = userDatabase.getUser(authtoken).handle;
     let property = userDatabase.getUser(authtoken).getProperty();
     let data = {private: priv, handle: handle, property: property};
@@ -175,12 +166,12 @@ export module Authentication {
     res.render('account', data);
   }
 
-  export function getAuthtoken(req) {
+  export function getAuthtoken(req: express.Request) {
     let authtoken;
 
-    if (req.headers.cookie == undefined) { return authtoken; }
+    if (req.headers["cookie"] == undefined) { return authtoken; }
 
-    let cookies = req.headers.cookie.split('; ');
+    let cookies = req.headers["cookie"].split('; ');
     for (let i in cookies) {
       let cookie = cookies[i].split('=');
       if (cookie[0] == 'authtoken' && cookie[1] in userDatabase.users) {
@@ -190,7 +181,7 @@ export module Authentication {
     return authtoken;
   }
 
-  export function editHandle(req, res) {
+  export function editHandle(req: express.Request, res: express.Response) {
     let authtoken = getAuthtoken(req);
     let oldHandle = userDatabase.getUser(authtoken).handle;
     let handle = req.params.handle
