@@ -21,8 +21,8 @@ html
     div(class="content textcontent")
       header(class="block")
         h1 #{handle}
-      div(class="padded")
-        div(class="account-maincontent")
+      div(class="padded flex-parent")
+        div(class="flex-size-7 column-flex")
           if private
             p Welcome back, #{handle}!
             p Your authorization token is
@@ -41,4 +41,11 @@ html
           br
 
           a(href="/") Back to main page
-        div(class="")
+        if private
+          div(class="flex-size-3 column-flex padded")
+            b User Actions:
+            button(onclick="changeHandle('" + handle + "')") Change handle
+
+    <script>
+    include account.js
+    </script>

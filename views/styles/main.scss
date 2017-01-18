@@ -178,13 +178,6 @@ html, body {
             height: 3%;
             min-height: 30px;
 
-            @mixin flex-size-x {
-               @for $i from 1 through 10 {
-                  .flex-size-#{$i} { flex: $i; }
-               }
-            }
-            @include flex-size-x;
-
             .nameplate {
                height: 100%;
                display: inline-flex;
@@ -305,11 +298,30 @@ html, body {
    }
 }
 
-.flex-center {
+.flex-parent {
+  display: flex;
+}
+
+.column-flex {
    display: flex;
    flex-direction: column;
-   justify-content: center;
 }
+
+.row-flex {
+  @extend .column-flex;
+  flex-direction: row;
+}
+
+.column-flex.center, .row-flex.center {
+  justify-content: center;
+}
+
+@mixin flex-size-x {
+   @for $i from 1 through 10 {
+      .flex-size-#{$i} { flex: $i; }
+   }
+}
+@include flex-size-x;
 
 @media (max-width: 900px) {
    .content {

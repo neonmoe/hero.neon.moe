@@ -88,6 +88,15 @@ export module Authentication {
       }
       return false;
     }
+
+    changeHandle(token, newHandle): boolean {
+      if (this.handleExistsCaseInsensitive(newHandle)) { return false; }
+      let user = this.getUser(token);
+      this.handles[newHandle.toLowerCase()] = token;
+      delete this.handles[user.handle.toLowerCase()];
+      user.handle = newHandle;
+      return true;
+    }
   }
 
   const userDatabase = new UserDatabase();
@@ -179,5 +188,22 @@ export module Authentication {
       }
     }
     return authtoken;
+  }
+
+  export function editHandle(req, res) {
+    let authtoken = getAuthtoken(req);
+    let handle = req.params.handle
+    if (!authtoken) {
+      res.status(403);
+      res.send("Not authorisized.");
+    } else if (userDatabase.changeHandle(authtoken, handle)) {
+      console.log(userDatabase.handles)
+      console.log(userDatabase.getUser(authtoken))
+      res.status(200);
+      res.send("Success.");
+    } else {
+      res.status(403);
+      res.send("Handle taken.");
+    }
   }
 }

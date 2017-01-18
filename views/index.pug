@@ -11,7 +11,9 @@ html
         p This HERO-like RPG sheet manager is still under construction.
 
         if authorized
-          p You're authorized! Visit /a to view your auth token.
+          p You're authorized! Visit
+            a(href="/a")  /a
+            span  to view your auth token.
         else
           button(onclick="genuser()") Generate new user
 
