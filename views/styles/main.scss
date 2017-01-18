@@ -18,6 +18,29 @@ html, body {
    color: rgb(204, 205, 219);
 }
 
+.textcontent {
+  p {
+    margin: 0;
+    padding: 0;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    padding-left: 2em;
+    li {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  a {
+    color: rgb(59, 72, 187);
+    text-decoration: none;
+  }
+}
 
 .content {
    min-height: 100%;
@@ -25,28 +48,6 @@ html, body {
    min-width: 900px;
    margin: auto;
    background-color: $primary-color;
-
-   p {
-     margin: 0;
-     padding: 0;
-     padding-top: 0.2em;
-     padding-bottom: 0.2em;
-   }
-
-   ul {
-     margin: 0;
-     padding: 0;
-     padding-left: 2em;
-     li {
-       margin: 0;
-       padding: 0;
-     }
-   }
-
-   a {
-     color: rgb(59, 72, 187);
-     text-decoration: none;
-   }
 
    .padded {
      padding: 1em;
