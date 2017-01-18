@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/c/:world/:name", Sheetview.view); // View a character :name in :world
 app.get("/n/:world/:name", Sheetview.create); // Create character :name to :world
-app.put("/e/:world/:name/:action/:stat", Sheetview.edit); // Edit character :name's :stat in :world by :action
+app.get("/e/:world/:name/:action/:value", Sheetview.edit); // Edit character :name's :stat in :world by :action
 app.post("/a/generate", Authentication.generateUser); // Generate a new account
 app.get("/a", Authentication.view); // View current account
 app.get("/a/:handle", Authentication.view); // View account at :handle
