@@ -1,17 +1,15 @@
 html
   head
-  title #{title}
+  title RPG Sheet Manager
   style
     include styles/main.css
   body
     div(class="content")
       header(class="block")
-        h1 #{header}
+        h1 RPG Sheet Manager for HERO-likes
       div(class="padded")
-        p #{description}
-        h3 List of all characters that exist on the current world:
-        p #{charlist}
-
+        p This HERO-like RPG sheet manager is still under construction.
+        
         if authorized
           p You're authorized! Visit /a to view your auth token.
         else

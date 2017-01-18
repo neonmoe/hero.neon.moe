@@ -6,7 +6,18 @@ html
   body
     div(class="content")
       header(class="block")
-        h2 Are you sure you want to create the character "#{name}"?
+        if worldmissing
+          h2 You seem to be lost, "#{world}" doesn't exist.
+        else
+          if creation
+            h2 Do you want to create the character "#{name}" in the world "#{world}"?
+          else
+            if popLimit
+              h2 #{world} seems to be full. Contact the server admin if you <i>really</i> want to create this character.
+            else
       div(class="padded")
-        <a href="/c/#{name}/confirm">Yes!</a><br>
-        <a href="/">Nah, return me to the index.</a>
+        if creation
+          if worldmissing
+          else
+            <a href="/n/#{world}/#{name}">Yes!</a><br>
+        <a href="/">Return to the index.</a>

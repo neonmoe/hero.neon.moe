@@ -1,3 +1,4 @@
+/*
 // Constants for the characteristics' point spending [base value, min points, value per min points, rollable]
 const characteristicValues = {
   "str": [10, 1, 1, true],
@@ -88,3 +89,4 @@ let updateAllStats = () => {
 
 updateAllStats();
 window.setInterval(updateAllStats, 1000);
+*/
