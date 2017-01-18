@@ -18,6 +18,29 @@ html, body {
    color: rgb(204, 205, 219);
 }
 
+.textcontent {
+  p {
+    margin: 0;
+    padding: 0;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    padding-left: 2em;
+    li {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  a {
+    color: rgb(59, 72, 187);
+    text-decoration: none;
+  }
+}
 
 .content {
    min-height: 100%;
@@ -25,11 +48,6 @@ html, body {
    min-width: 900px;
    margin: auto;
    background-color: $primary-color;
-
-   a {
-     color: rgb(59, 72, 187);
-     text-decoration: none;
-   }
 
    .padded {
      padding: 1em;
@@ -160,13 +178,6 @@ html, body {
             height: 3%;
             min-height: 30px;
 
-            @mixin flex-size-x {
-               @for $i from 1 through 10 {
-                  .flex-size-#{$i} { flex: $i; }
-               }
-            }
-            @include flex-size-x;
-
             .nameplate {
                height: 100%;
                display: inline-flex;
@@ -287,11 +298,30 @@ html, body {
    }
 }
 
-.flex-center {
+.flex-parent {
+  display: flex;
+}
+
+.column-flex {
    display: flex;
    flex-direction: column;
-   justify-content: center;
 }
+
+.row-flex {
+  @extend .column-flex;
+  flex-direction: row;
+}
+
+.column-flex.center, .row-flex.center {
+  justify-content: center;
+}
+
+@mixin flex-size-x {
+   @for $i from 1 through 10 {
+      .flex-size-#{$i} { flex: $i; }
+   }
+}
+@include flex-size-x;
 
 @media (max-width: 900px) {
    .content {

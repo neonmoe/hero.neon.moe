@@ -1,13 +1,51 @@
+mixin createList(properties)
+  each val, key in property
+    b #{key}
+    ul
+      each item in val
+        li
+          if key == "worlds"
+            a(href="#") #{item}
+          if key == "characters"
+            a(href="/c/" + item.world + "/" + item.name) [#{item.name}] of world [#{item.world}]
+          if key == "images"
+            a(href="#") #{item}
+          if key == "audio"
+            a(href="#") #{item}
 html
   head
   title #{title}
   style
     include styles/main.css
   body
-    div(class="content")
+    div(class="content textcontent")
       header(class="block")
-        h1 You're authorized!
-      div(class="padded")
-        p Your authorization token is #{token}, but it's saved in your cookies safely!
-        p Please keep it safe though in case you ever clear your cookies or need to authorisize from another cookie etc. You'll need it then!
-        a(href="/") Back to main page
+        h1 #{handle}
+      div(class="padded flex-parent")
+        div(class="flex-size-7 column-flex")
+          if private
+            p Welcome back, #{handle}!
+            p Your authorization token is
+              b  #{token}
+              span , but it's saved in your cookies safely!
+            p Please keep it safe though in case you ever clear your cookies or need to authorisize from another cookie etc. You'll need it then to be able to authorisize again!
+            p Here are the properties you currently own:
+          else
+            p You're viewing #{handle}, a humble user!
+            p #{handle} seems to own the following properties:
+
+          br
+
+          +createList(property)
+
+          br
+
+          a(href="/") Back to main page
+        if private
+          div(class="flex-size-3 column-flex padded")
+            b User Actions:
+            button(onclick="changeHandle('" + handle + "')") Change handle
+
+    <script>
+    include account.js
+    </script>

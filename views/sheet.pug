@@ -1,7 +1,7 @@
 mixin statrow(stat, statname, desc)
   <div class="flexed-statblock">
     <div class="nameplate flex-size-7">
-      <div class="flex-center name" title="#{desc}">
+      <div class="column-flex center name" title="#{desc}">
         <p>#{statname}</p>
       </div>
     </div>
@@ -11,13 +11,13 @@ mixin statrow(stat, statname, desc)
     <div class="flex-center valuefield flex-size-1">
       <p class="values-for-#{stat}" />
     </div>
-    <div class="flex-center positive button flex-size-1" onclick="increaseStat('#{stat}')">
+    <div class="column-flex center positive button flex-size-1" onclick="increaseStat('#{stat}')">
       <p>+</p>
     </div>
     <div class="flex-center valuefield flex-size-1">
       <p class="points-for-#{stat}" />
     </div>
-    <div class="flex-center negative button flex-size-1" onclick="decreaseStat('#{stat}')">
+    <div class="column-flex center negative button flex-size-1" onclick="decreaseStat('#{stat}')">
       <p>-</p>
     </div>
   </div>
@@ -52,16 +52,16 @@ html
       <div class="stats-content block">
         <div class="column">
           <div class="flexed-statblock">
-            <div class="title flex-center flex-size-7">
+            <div class="title column-flex center flex-size-7">
               <p>Characteristics</p>
             </div>
-            <div class="flex-center flex-size-1">
+            <div class="column-flex center flex-size-1">
               <p class="icon" title="Roll">🎲</p>
             </div>
-              <div class="flex-center flex-size-1">
+              <div class="column-flex center flex-size-1">
               <p class="icon" title="Total">= </p>
             </div>
-            <div class="flex-center flex-size-3">
+            <div class="column-flex center flex-size-3">
               <p class="icon" title="Points">💯</p>
             </div>
           </div>
@@ -85,126 +85,126 @@ html
         </div>
         <div class="column">
           <div class="flexed-statblock">
-            <div class="title flex-center flex-size-7">
+            <div class="title column-flex center flex-size-7">
               <p>Experience Points</p>
             </div>
-            <div class="flex-center flex-size-1">
+            <div class="column-flex center flex-size-1">
               <p class="icon" title="Total">✨</p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Total experience gained">
+              <div class="column-flex center name" title="Total experience gained">
                 <p>Total</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p class="totalexp"></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Total experience spent">
+              <div class="column-flex center name" title="Total experience spent">
                 <p>Spent</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p class="spentexp"></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Total experience to be spent">
+              <div class="column-flex center name" title="Total experience to be spent">
                 <p>Unspent</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p class="unspentexp"></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
-            <div class="title flex-center flex-size-7">
+            <div class="title column-flex center flex-size-7">
               <p>Current Status</p>
             </div>
-            <div class="flex-center flex-size-1">
+            <div class="column-flex center flex-size-1">
               <p class="icon" title="Current/Total">❤️️</p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Current Endurance Status / Maximum Endurance Status">
+              <div class="column-flex center name" title="Current Endurance Status / Maximum Endurance Status">
                 <p>Endurance</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p><span class="curend"></span>/<span class="valend"></span></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Current Body Status / Maximum Body Status">
+              <div class="column-flex center name" title="Current Body Status / Maximum Body Status">
                 <p>Body</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p><span class="curbody"></span>/<span class="valbody"></span></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Current Stun Status / Maximum Stun Status">
+              <div class="column-flex center name" title="Current Stun Status / Maximum Stun Status">
                 <p>Stun</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p><span class="curstun"></span>/<span class="valstun"></span></p>
             </div>
           </div>
 
 
           <div class="flexed-statblock">
-            <div class="title flex-center flex-size-7">
+            <div class="title column-flex center flex-size-7">
               <p>Strength Information</p>
             </div>
-            <div class="flex-center flex-size-1">
+            <div class="column-flex center flex-size-1">
               <p class="icon" title="Total">💪️</p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="Damage roll for Hand-to-hand combat">
+              <div class="column-flex center name" title="Damage roll for Hand-to-hand combat">
                 <p>Hand-to-Hand Damage</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p class="hthdmg"></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
             <div class="nameplate flex-size-7">
-              <div class="flex-center name" title="The weight limit for lifting.">
+              <div class="column-flex center name" title="The weight limit for lifting.">
                 <p>Lift</p>
               </div>
             </div>
-            <div class="flex-center valuefield flex-size-1">
+            <div class="column-flex center valuefield flex-size-1">
               <p class="liftwg"></p>
             </div>
           </div>
 
           <div class="flexed-statblock">
-            <div class="title flex-center flex-size-7">
+            <div class="title column-flex center flex-size-7">
               <p>Description</p>
             </div>
-            <div class="flex-center flex-size-1">
+            <div class="column-flex center flex-size-1">
               <p class="icon" title="Description">💬️</p>
             </div>
           </div>
