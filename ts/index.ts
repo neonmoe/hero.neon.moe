@@ -18,9 +18,10 @@ app.get("/", (req, res) => {
 app.get("/c/:world/:name", Sheetview.view);
 app.get("/n/:world/:name", Sheetview.create);
 app.put("/e/:world/:name/:action/:stat", Sheetview.edit);
-app.get("/a", Authentication.view);
 app.post("/a/generate", Authentication.generateUser);
+app.get("/a", Authentication.view);
 app.get("/a/:handle", Authentication.view);
+app.get("/a/:handle/public", Authentication.viewPublic);
 
 app.get("/emojifont", (req, res) => {
    res.sendFile(path.resolve("./") + "/views/emojione-svg.woff2");

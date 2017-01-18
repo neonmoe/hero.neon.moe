@@ -4,8 +4,14 @@ mixin createList(properties)
     ul
       each item in val
         li
-          p #{item}
-
+          if key == "worlds"
+            a(href="#") #{item}
+          if key == "characters"
+            a(href="/c/" + item.world + "/" + item.name) [#{item.name}] of world [#{item.world}]
+          if key == "images"
+            a(href="#") #{item}
+          if key == "audio"
+            a(href="#") #{item}
 html
   head
   title #{title}
@@ -16,7 +22,7 @@ html
       header(class="block")
         h1 #{handle}
       div(class="padded")
-        if isOwn
+        if private
           p Welcome back, #{handle}!
           p Your authorization token is
             b  #{token}

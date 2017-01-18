@@ -30,7 +30,7 @@ export module Authentication {
     getProperty() {
       return {
         worlds: ["test"],
-        characters: ["boop", "bob"],
+        characters: [{name: "bob", world: "dbl"}, {name: "beb", world: "dbl"}],
         images: ["joku.png"],
         audio: ["musa.mp4"]
       };
@@ -124,28 +124,46 @@ export module Authentication {
     res.send(token);
   }
 
-  export function view(req, res) {
-    let authtoken: string;
-    let isOwn = true;
-    if (req.params.handle) {
-      authtoken = userDatabase.handles[req.params.handle.toLowerCase()];
-      console.log(authtoken);
-      isOwn = false;
-    } else {
-      authtoken = getAuthtoken(req);
+  export function viewPublic(req, res) {
+    let authtoken = getAuthtoken(req);
+    let token = userDatabase.handles[req.params.handle.toLowerCase()];
+    if (authtoken != token) {
+      res.redirect("/a/" + req.params.handle);
+      return;
     }
-    if (authtoken in userDatabase.users) {
-      let handle = userDatabase.getUser(authtoken).handle;
-      let property = userDatabase.getUser(authtoken).getProperty();
-      let data = {isOwn: isOwn, handle: handle, property: property};
-      if (isOwn) {
-        data["token"] = authtoken;
-      }
-      res.render('account', data);
+    renderAccount(authtoken, false, res);
+  }
 
-    } else {
-      res.redirect('/');
+  export function view(req, res) {
+    let authtoken = getAuthtoken(req);
+    let priv = true;
+    if (req.params.handle) {
+      let token = userDatabase.handles[req.params.handle.toLowerCase()];
+      if (token != authtoken) {
+        authtoken = token;
+        priv = false;
+      }
+      if (authtoken) {
+        renderAccount(authtoken, priv, res);
+        return;
+      }
+    } else if (authtoken !== undefined) {
+      let handle = userDatabase.getUser(authtoken).handle;
+      res.redirect("/a/" + handle);
+      return;
     }
+    res.render("404");
+    return;
+  }
+
+  function renderAccount(authtoken: string, priv: boolean, res) {
+    let handle = userDatabase.getUser(authtoken).handle;
+    let property = userDatabase.getUser(authtoken).getProperty();
+    let data = {private: priv, handle: handle, property: property};
+    if (priv) {
+      data["token"] = authtoken;
+    }
+    res.render('account', data);
   }
 
   export function getAuthtoken(req) {
