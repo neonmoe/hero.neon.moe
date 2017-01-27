@@ -55,8 +55,6 @@ function updateFrontendForStat(stat) {
 function updateFrontendForExp() {
   let totalExp = netdb.get("exp");
   let spentExp = CharacterUtils.getSpentExperience(netdb);
-  console.log("Total exp: " + totalExp);
-  console.log("Spent exp: " + spentExp);
   updateClasses("total-exp", totalExp);
   updateClasses("spent-exp", spentExp);
   updateClasses("unspent-exp", totalExp - spentExp);
@@ -80,16 +78,29 @@ function updateClasses(name, value) {
 }
 
 // Requesting stuff
+let lastUsefulTime = NetDB.getTime();
 function update(time) {
-  var req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.addEventListener("load", _ => {
-    netdb.updateValues(JSON.parse(req.response), time);
-    updateFrontend();
+    let values = JSON.parse(req.response);
+    netdb.updateValues(values, time);
+    if (Object.keys(values).length > 0) {
+      updateFrontend();
+      lastUsefulTime = NetDB.getTime();
+    }
   });
   req.open("GET", "http://" + window.location.host + "/c/a/" + worldName + "/" + characterName + "/sync/" + time);
   req.send();
 }
 
-window.setInterval(function (_) {
-  update(NetDB.getTime());
-}, 5000);
+let lastTime = NetDB.getTime();
+function sync() {
+  update(lastTime);
+  lastTime = NetDB.getTime();
+  let delayTime = 350;
+  if (lastTime - lastUsefulTime > 20000) {
+    delayTime = 2000;
+  }
+  window.setTimeout(sync, delayTime);
+}
+sync();

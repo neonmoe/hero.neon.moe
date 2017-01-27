@@ -7,6 +7,7 @@ import {Universe} from "./universe"
 const app = express();
 
 app.set("view engine", "pug");
+app.disable("etag");
 
 app.get("/", (req, res) => {
   res.render("index", {

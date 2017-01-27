@@ -45,6 +45,7 @@ export module Sheetview {
           } else {
             CharacterUtils.decreaseStat(netdb, stat);
           }
+          res.send("OK");
           break;
         case "sync":
           let value = netdb.getNewValues(parseInt(req.params.value));
