@@ -1,5 +1,7 @@
 import Character from "./character";
 import Namer from "./namer";
+import * as express from "express";
+import {Authentication} from "./authentication";
 
 export module Universe {
   let worlds: {[key: string]: {[key: string]: Character}} = {};
@@ -30,7 +32,7 @@ export module Universe {
   }
 
   /** Returns false when the character can't be created, ie. when it exists already or the world is full. (See Universe.isWorldFull() for more specifics.) */
-  export function createCharacter(world: string, name: string): boolean {
+  export function createCharacter(world: string, name: string, authkey: string): boolean {
     if (characterExists(world, name)) {
       return false;
     } else if (isWorldFull(world)) {
@@ -38,7 +40,10 @@ export module Universe {
       return false;
     } else {
       let key = Namer.convertNameToKey(name);
-      getWorld(world)[key] = new Character(name);
+      let character = new Character(name);
+      getWorld(world)[key] = character;
+      Authentication.permission.give(character.viewPL, authkey);
+      Authentication.permission.give(character.editPL, authkey);
       console.log("Created a character named '" + name + "' on the world '" + world + "'.");
       return true;
     }
@@ -51,6 +56,46 @@ export module Universe {
   export function getCharacter(world: string, name: string) {
     if (characterExists(world, name)) {
       return getWorld(world)[Namer.convertNameToKey(name)];
+    }
+  }
+
+  export function tellWorldsToReq(req: express.Request, res: express.Response) {
+    if (Authentication.getAuthtoken(req) !== undefined) {
+      res.send(Object.keys(worlds));
+    } else {
+      res.send([]);
+    }
+  }
+
+  export function canCreateCharacter(req: express.Request, res: express.Response) {
+    let world = req.params.world;
+    if (Authentication.getAuthtoken(req) !== undefined) {
+      res.send(Universe.worldExists(world) && !isWorldFull(world));
+    } else {
+      res.send(false);
+    }
+  }
+
+  export function createCharacterOnRequest(req: express.Request, res: express.Response) {
+    let token = Authentication.getAuthtoken(req);
+    if (token !== undefined) {
+      let world = req.params.world;
+      let name = req.params.name;
+      let worldmissing = !Universe.worldExists(world);
+      if (!Universe.createCharacter(world, name, token)) {
+        /**
+        res.render("createcharacter", {
+          name: name, world: world, popLimit: true,
+          creation: false, worldmissing: worldmissing
+        });*/
+        res.send("OK");
+      } else {
+        res.statusCode = 403;
+        res.send("ERR");
+      }
+    } else {
+      res.statusCode = 403;
+      res.send("ERR");
     }
   }
 }

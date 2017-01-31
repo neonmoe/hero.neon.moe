@@ -2,6 +2,9 @@ import * as express from "express";
 import Namer from "./namer";
 import {Universe} from "./universe";
 
+/**
+* API for authenticating, checking authentication and checking permissions.
+*/
 export module Authentication {
 
   class User {
@@ -112,14 +115,18 @@ export module Authentication {
     }
 
     give(id: number, token: string) {
-      console.log(`Permission for ${this.identifiers[id]} given to ${userDatabase.getUser(token).handle}`);
+      let user = userDatabase.getUser(token);
+      let name = (user !== undefined) ? user.handle : token;
+      console.log(`Permission for ${this.identifiers[id]} given to ${name}`);
       if (!this.has(id, token)) {
         this.permissions[id].push(token);
       }
     }
 
     revoke(id: number, token: string) {
-      console.log(`Permission for ${this.identifiers[id]} revoked from ${userDatabase.getUser(token).handle}`);
+      let user = userDatabase.getUser(token);
+      let name = (user !== undefined) ? user.handle : token;
+      console.log(`Permission for ${this.identifiers[id]} revoked from ${name}`);
       if (this.has(id, token)) {
         this.permissions[id].splice(this.permissions[id].indexOf(token), 1);
       }
@@ -130,8 +137,8 @@ export module Authentication {
 
   export function generateUser(req: express.Request, res: express.Response) {
     let token = userDatabase.generateNewUser();
-    permission.give(Universe.getCharacter("dbl", "bob").viewPL, token);
-    permission.give(Universe.getCharacter("dbl", "bob").editPL, token);
+    permission.give(Universe.getCharacter("Heaven", "Jesus").viewPL, token);
+    permission.give(Universe.getCharacter("Heaven", "Jesus").editPL, token);
     res.cookie('authtoken', token, {expires: new Date(Date.now() + 31536000000)});
     res.send(token);
   }
