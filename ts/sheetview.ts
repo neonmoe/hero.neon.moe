@@ -8,7 +8,7 @@ export module Sheetview {
     let name = req.params.name;
     let worldmissing = !Universe.worldExists(world);
     if (Universe.characterExists(world, name)) {
-      res.render("sheet", {name: name});
+      res.render("sheet", {name: Universe.getCharacter(world, name).name});
     } else {
       res.render("createcharacter", {
         name: name, world: world, pop: false,
@@ -46,6 +46,9 @@ export module Sheetview {
             CharacterUtils.decreaseStat(netdb, stat);
           }
           res.send("OK");
+          break;
+        case "update-text-stat":
+          netdb.updateValue("textstat-" + req.params.value, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(req.params.value)));
           break;
         case "sync":
           let value = netdb.getNewValues(parseInt(req.params.value));
