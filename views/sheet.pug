@@ -1,7 +1,7 @@
 mixin statrow(stat, statname, desc)
   div(class="flexed-statblock")
     div(class="nameplate flex-size-7")
-      div(class="column-flex center name" title="#{desc}")
+      div(class="column-flex center name" title=desc)
         p #{statname}
 
     div(class="column-flex center valuefield flex-size-1")
@@ -26,151 +26,348 @@ html
     style
       include styles/main.css
 
-  body
+  body()
     div(class="content")
       header(class="block")
         i The sheet of
         h1#charactername #{name}
         h3 Destroyer of worlds
       div(class="tabs")
-         div(class="tab" data-active="false")
+         div(class="tab" data-active="false" data-tab="lore" onclick="switchTab('lore')")
             h3 Lore
-         div(class="tab" data-active="true")
+         div(class="tab" data-active="false" data-tab="characteristics" onclick="switchTab('characteristics')")
             h3 Characteristics
-         div(class="tab" data-active="false")
-            h3 Skills & Talents
-         div(class="tab" data-active="false")
-            h3 Powers & Modifiers
+         div(class="tab" data-active="false" data-tab="skills" onclick="switchTab('skills')")
+            h3 Skills
+         div(class="tab" data-active="false" data-tab="powers" onclick="switchTab('powers')")
+            h3 Powers
+         div(class="tab" data-active="false" data-tab="modifiers" onclick="switchTab('modifiers')")
+            h3 Modifiers
       div(class="stats-content block")
-        div(class="column")
-          div(class="flexed-statblock")
-            div(class="title column-flex center flex-size-7")
-              p Characteristics
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Roll") 🎲
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Total") =
 
-            if edit
-              div(class="column-flex center flex-size-3")
-                p(class="icon" title="Points") 💯
-            else
-              div(class="column-flex center flex-size-1")
-                p(class="icon" title="Points") 💯
+        div(class="tabcontent" data-active="false" data-tab="lore")
+          div(class="flex-parent")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Player Name
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Player") 🙂️
+              div(class="statblock")
+                div(class="input-stuffer")
+                  div(class="input-stuffer")
+                    if edit
+                      textarea
+                    else
+                      textarea(readonly=true)
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Character Name
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Character Name") 🤺
+              div(class="statblock")
+                div(class="input-stuffer")
+                  div(class="input-stuffer")
+                    if edit
+                      textarea
+                    else
+                      textarea(readonly=true)
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Alternate Identities
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Alternate Identities") 🎭
+              div(class="statblock")
+                div(class="input-stuffer")
+                  div(class="input-stuffer")
+                    if edit
+                      textarea
+                    else
+                      textarea(readonly=true)
 
-          +statrow("str", "Strength", "Strength is streangth 💪, dummy!")
-          +statrow("dex", "Dexterity", "Makes you dexterous and fast! 🏃")
-          +statrow("con", "Constitution", "Makes you healthy and hardy! ❤️️")
-          +statrow("int", "Intelligence", "Make you smart! 💡")
-          +statrow("ego", "Ego", "Character's mental strength and willpower 😏")
-          +statrow("pre", "Presence", "Makes you charismatic 🎸")
-          +statrow("ocv", "Offensive Combat", "You'll be able to hit easier with higher accuracy! 🗡️")
-          +statrow("dcv", "Defensive Combat", "Others won't be able to hit you 💃")
-          +statrow("omcv", "Offensive Mental Combat", "Makes you an intense starer 👀")
-          +statrow("dmcv", "Defensive Mental Combat", "You'll be better dodging difficult questions 🙃")
-          +statrow("spd", "Speed", "Makes you fast like a horse! 🐎")
-          +statrow("pd", "Physical Defense", "Makes you a tough bastard! 🛡")
-          +statrow("ed", "Energy Defense", "Protects you from electricity/fire or other energy attacks 🤖")
-          +statrow("rec", "Recovery", "You'll be able to recover faster 💞")
-          +statrow("end", "Endurance", "Makes you able to endure the toughest situations! 🚴")
-          +statrow("body", "Body", "Makes your body endure more suffering 🤒")
-          +statrow("stun", "Stun", "Makes your head withstand more before getting stunned 🤕")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Background
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Background") 💬️
+              div(class="statblock-5")
+                div(class="input-stuffer")
+                  if edit
+                    textarea
+                  else
+                    textarea(readonly=true)
 
-        div(class="column")
-          div(class="flexed-statblock")
-            div(class="title column-flex center flex-size-7")
-              p Experience Points
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Total") ✨
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Looks
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Looks") 💆
+              div(class="statblock-5")
+                div(class="input-stuffer")
+                  if edit
+                    textarea
+                  else
+                    textarea(readonly=true)
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Total experience gained")
-                p Total
-            div(class="column-flex center valuefield flex-size-1")
-              p(class="total-exp")
+                div(class="flexed-statblock")
+                  div(class="title column-flex center flex-size-7")
+                    p Likes / Dislikes / Misc
+                  div(class="column-flex center flex-size-1")
+                    p(class="icon" title="Likes / Dislikes / Misc") 🤔
+                div(class="statblock-5")
+                  div(class="input-stuffer")
+                    if edit
+                      textarea
+                    else
+                      textarea(readonly=true)
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Total experience spent")
-                p Spent
-            div(class="column-flex center valuefield flex-size-1")
-              p(class="spent-exp")
+        div(class="tabcontent" data-active="false" data-tab="characteristics")
+          div(class="flex-parent")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Characteristics
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Roll") 🎲
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Total") =
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Total experience to be spent")
-                p Unspent
-            div(class="column-flex center valuefield flex-size-1")
-              p(class="unspent-exp")
+                if edit
+                  div(class="column-flex center flex-size-3")
+                    p(class="icon" title="Points") 💯
+                else
+                  div(class="column-flex center flex-size-1")
+                    p(class="icon" title="Points") 💯
 
-          div(class="flexed-statblock")
-            div(class="title column-flex center flex-size-7")
-              p Current Status
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Current/Total") ❤️️
+              +statrow("str", "Strength", "Strength is streangth 💪, dummy!")
+              +statrow("dex", "Dexterity", "Makes you dexterous and fast! 🏃")
+              +statrow("con", "Constitution", "Makes you healthy and hardy! ❤️️")
+              +statrow("int", "Intelligence", "Make you smart! 💡")
+              +statrow("ego", "Ego", "Character's mental strength and willpower 😏")
+              +statrow("pre", "Presence", "Makes you charismatic 🎸")
+              +statrow("ocv", "Offensive Combat", "You'll be able to hit easier with higher accuracy! 🗡️")
+              +statrow("dcv", "Defensive Combat", "Others won't be able to hit you 💃")
+              +statrow("omcv", "Offensive Mental Combat", "Makes you an intense starer 👀")
+              +statrow("dmcv", "Defensive Mental Combat", "You'll be better dodging difficult questions 🙃")
+              +statrow("spd", "Speed", "Makes you fast like a horse! 🐎")
+              +statrow("pd", "Physical Defense", "Makes you a tough bastard! 🛡")
+              +statrow("ed", "Energy Defense", "Protects you from electricity/fire or other energy attacks 🤖")
+              +statrow("rec", "Recovery", "You'll be able to recover faster 💞")
+              +statrow("end", "Endurance", "Makes you able to endure the toughest situations! 🚴")
+              +statrow("body", "Body", "Makes your body endure more suffering 🤒")
+              +statrow("stun", "Stun", "Makes your head withstand more before getting stunned 🤕")
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Current Endurance Status / Maximum Endurance Status")
-                p Endurance
-            div(class="column-flex center valuefield flex-size-1")
-              p
-                span(class="current-end") /
-                  span(class="value-for-end")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Experience Points
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Total") ✨
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Current Body Status / Maximum Body Status")
-                p Body
-            div(class="column-flex center valuefield flex-size-1")
-              p
-                span(class="current-body") /
-                  span(class="value-for-body")
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Total experience gained")
+                    p Total
+                div(class="column-flex center valuefield flex-size-1")
+                  p(class="total-exp")
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Current Stun Status / Maximum Stun Status")
-                p Stun
-            div(class="column-flex center valuefield flex-size-1")
-              p
-                span(class="current-stun") /
-                  span(class="value-for-stun")
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Total experience spent")
+                    p Spent
+                div(class="column-flex center valuefield flex-size-1")
+                  p(class="spent-exp")
 
-          div(class="flexed-statblock")
-            div(class="title column-flex center flex-size-7")
-              p Strength Information
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Total") 💪️
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Total experience to be spent")
+                    p Unspent
+                div(class="column-flex center valuefield flex-size-1")
+                  p(class="unspent-exp")
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="Damage roll for Hand-to-hand combat")
-                p Hand-to-Hand Damage
-            div(class="column-flex center valuefield flex-size-1")
-              p(class="hand-to-hand-dmg")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Current Status
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Current/Total") ❤️️
 
-          div(class="flexed-statblock")
-            div(class="nameplate flex-size-7")
-              div(class="column-flex center name" title="The weight limit for lifting.")
-                p Lift
-            div(class="column-flex center valuefield flex-size-1")
-              p(class="lift-weight")
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Current Endurance Status / Maximum Endurance Status")
+                    p Endurance
+                div(class="column-flex center valuefield flex-size-1")
+                  p
+                    span(class="current-end") /
+                      span(class="value-for-end")
 
-          div(class="flexed-statblock")
-            div(class="title column-flex center flex-size-7")
-              p Description
-            div(class="column-flex center flex-size-1")
-              p(class="icon" title="Description") 💬️
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Current Body Status / Maximum Body Status")
+                    p Body
+                div(class="column-flex center valuefield flex-size-1")
+                  p
+                    span(class="current-body") /
+                      span(class="value-for-body")
 
-          div(class="statblock-3")
-            div(class="input-stuffer")
-              if edit
-                textarea(id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
-              else
-                textarea(readonly=true id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Current Stun Status / Maximum Stun Status")
+                    p Stun
+                div(class="column-flex center valuefield flex-size-1")
+                  p
+                    span(class="current-stun") /
+                      span(class="value-for-stun")
+
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Strength Information
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Total") 💪️
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center name" title="Damage roll for Hand-to-hand combat")
+                    p Hand-to-Hand Damage
+                div(class="column-flex center valuefield flex-size-1")
+                  p(class="hand-to-hand-dmg")
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center")
+                    p Lift
+                div(class="column-flex center valuefield flex-size-1")
+                  p(class="lift-weight")
+
+        div(class="tabcontent" data-active="false" data-tab="skills")
+          div(class="flex-parent")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-4")
+                  p Skills
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Roll") 🎲
+                div(class="column-flex center flex-size-3")
+                  p(class="icon" title="Points") 💯
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Delete") ❌
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-4")
+                  div(class="column-flex center")
+                    p Example skill
+                div(class="column-flex center valuefield flex-size-1")
+                  p 0
+                div(class="column-flex center button positive flex-size-1")
+                  p +
+                div(class="column-flex center valuefield flex-size-1")
+                  p 0
+                div(class="column-flex center button negative flex-size-1")
+                  p -
+                div(class="column-flex center button negative flex-size-1")
+                  p Delete
+
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
+                  p New Skill
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Create") ✔️️
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Name:
+                div(class="column-flex center valuefield flex-size-4")
+                  input(type="text")
+                div(class="column-flex center valuefield flex-size-3")
+                  p
+                div(class="column-flex center button positive flex-size-1")
+                  p Create
+
+        div(class="tabcontent" data-active="false" data-tab="powers")
+          div(class="flex-parent")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
+                  p Powers
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Roll") 🎲
+
+        div(class="tabcontent" data-active="false" data-tab="modifiers")
+          div(class="column")
+            div(class="flexed-statblock")
+              div(class="title column-flex center flex-size-8")
+                p Create new modifier
+
+            div(class="flexed-statblock")
+              div(class="column-flex center valuefield flex-size-1")
+                p Name:
+              div(class="column-flex center valuefield flex-size-5")
+                input(type="text")
+              div(class="column-flex center valuefield flex-size-1")
+                select
+                  option(selected=true) Perk
+                  option Talent
+                  option Misc
+              div(class="column-flex center valuefield flex-size-1")
+                select
+                  option(selected=true disabled=true) Stat
+                  option Strength
+                  option Dexterity
+                  option Intelligence
+              div(class="column-flex center valuefield flex-size-1")
+                input(type="number")
+              div(class="column-flex center button positive flex-size-1")
+                p Add
+
+          div(class="column")
+            div(class="flexed-statblock")
+              <!-- I'm here as a padding! -->
+
+          div(class="flex-parent")
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
+                  p Perks
+
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-7")
+                  p Example Perk
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Points") 💯
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Delete") ❌
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center ")
+                    p Strength
+                div(class="column-flex center valuefield flex-size-1")
+                  p -5
+                div(class="column-flex center button negative flex-size-1")
+                  p X
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-7")
+                  div(class="column-flex center")
+                    p Experience
+                div(class="column-flex center valuefield flex-size-1")
+                  p 10
+                div(class="column-flex center button negative flex-size-1")
+                  p X
+
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
+                  p Talents
+            div(class="column")
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
+                  p Misc
+
 
     <script>var exports = {};
+      include sheet-tabs.js
       include ../js/netdb.js
       include ../js/characterUtils.js
       include sheet.js
