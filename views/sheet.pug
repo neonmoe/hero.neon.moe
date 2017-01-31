@@ -1,25 +1,25 @@
 mixin statrow(stat, statname, desc)
   <div class="flexed-statblock">
-    <div class="nameplate flex-size-7">
-      <div class="column-flex center name" title="#{desc}">
-        <p>#{statname}</p>
-      </div>
-    </div>
+    div(class="nameplate flex-size-7")
+      div(class="column-flex center name" title="#{desc}")
+        p #{statname}
+
     <div class="column-flex center valuefield flex-size-1">
       <p class="roll-for-#{stat}" />
     </div>
     <div class="column-flex center valuefield flex-size-1">
       <p class="value-for-#{stat}" />
     </div>
-    <div class="column-flex center positive button flex-size-1" onclick="increaseStat('#{stat}')">
-      <p>+</p>
-    </div>
-    <div class="column-flex center valuefield flex-size-1">
-      <p class="points-for-#{stat}" />
-    </div>
-    <div class="column-flex center negative button flex-size-1" onclick="decreaseStat('#{stat}')">
-      <p>-</p>
-    </div>
+    if edit
+      div(class="column-flex center positive button flex-size-1" onclick="increaseStat('" + stat + "')")
+        p +
+      div(class="column-flex center valuefield flex-size-1")
+        p(class="points-for-" + stat)
+      div(class="column-flex center negative button flex-size-1" onclick="decreaseStat('" + stat + "')")
+        p -
+    else
+      div(class="column-flex center valuefield flex-size-1")
+        p(class="points-for-" + stat)
   </div>
 
 html
@@ -61,9 +61,13 @@ html
               <div class="column-flex center flex-size-1">
               <p class="icon" title="Total">= </p>
             </div>
-            <div class="column-flex center flex-size-3">
-              <p class="icon" title="Points">💯</p>
-            </div>
+            if edit
+              div(class="column-flex center flex-size-3")
+                p(class="icon" title="Points") 💯
+            else
+              div(class="column-flex center flex-size-1")
+                p(class="icon" title="Points") 💯
+
           </div>
           +statrow("str", "Strength", "Strength is streangth 💪, dummy!")
           +statrow("dex", "Dexterity", "Makes you dexterous and fast! 🏃")

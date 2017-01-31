@@ -1,5 +1,6 @@
 import * as express from "express";
 import Namer from "./namer";
+import {Universe} from "./universe";
 
 export module Authentication {
 
@@ -34,8 +35,8 @@ export module Authentication {
       this.handles = { };
     }
 
-    generateNewUser(): User {
-      let token;
+    generateNewUser(): string {
+      let token: string;
       do {
         token = Namer.generateHexString(10);
       } while (token in this.users)
@@ -84,18 +85,21 @@ export module Authentication {
   class PermissionList {
 
     counter: number;
-    permissions: {[id: string]: string[]};
+    permissions: {[id: number]: string[]};
+    identifiers: {[id: number]: string};
 
     permittedTokens: string[];
 
     constructor() {
       this.counter = 0;
       this.permissions = {};
+      this.identifiers = {};
     }
 
-    new(): number {
+    new(identifier: string): number {
       let id = this.counter++;
       this.permissions[id] = [];
+      this.identifiers[id] = Namer.convertNameToKey(identifier);
       return id;
     }
 
@@ -103,13 +107,19 @@ export module Authentication {
       return this.permissions[id].indexOf(token) >= 0;
     }
 
+    reqHas(id: number, req: express.Request): boolean {
+      return this.has(id, getAuthtoken(req));
+    }
+
     give(id: number, token: string) {
+      console.log(`Permission for ${this.identifiers[id]} given to ${userDatabase.getUser(token).handle}`);
       if (!this.has(id, token)) {
         this.permissions[id].push(token);
       }
     }
 
     revoke(id: number, token: string) {
+      console.log(`Permission for ${this.identifiers[id]} revoked from ${userDatabase.getUser(token).handle}`);
       if (this.has(id, token)) {
         this.permissions[id].splice(this.permissions[id].indexOf(token), 1);
       }
@@ -120,6 +130,8 @@ export module Authentication {
 
   export function generateUser(req: express.Request, res: express.Response) {
     let token = userDatabase.generateNewUser();
+    permission.give(Universe.getCharacter("dbl", "bob").viewPL, token);
+    permission.give(Universe.getCharacter("dbl", "bob").editPL, token);
     res.cookie('authtoken', token, {expires: new Date(Date.now() + 31536000000)});
     res.send(token);
   }

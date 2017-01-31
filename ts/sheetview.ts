@@ -1,6 +1,7 @@
 import * as express from "express";
 import {Universe} from "./universe";
 import CharacterUtils from "./characterUtils";
+import {Authentication} from "./authentication";
 
 export module Sheetview {
   export function view(req: express.Request, res: express.Response) {
@@ -8,7 +9,13 @@ export module Sheetview {
     let name = req.params.name;
     let worldmissing = !Universe.worldExists(world);
     if (Universe.characterExists(world, name)) {
-      res.render("sheet", {name: name});
+      let character = Universe.getCharacter(world, name);
+      if (!Authentication.permission.reqHas(character.viewPL, req)) {
+        res.render("403");
+      } else {
+        let edit = Authentication.permission.reqHas(character.editPL, req);
+        res.render("sheet", {name: name, edit: edit});
+      }
     } else {
       res.render("createcharacter", {
         name: name, world: world, pop: false,
