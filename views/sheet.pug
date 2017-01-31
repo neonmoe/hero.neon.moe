@@ -1,15 +1,13 @@
 mixin statrow(stat, statname, desc)
-  <div class="flexed-statblock">
+  div(class="flexed-statblock")
     div(class="nameplate flex-size-7")
       div(class="column-flex center name" title="#{desc}")
         p #{statname}
 
-    <div class="column-flex center valuefield flex-size-1">
-      <p class="roll-for-#{stat}" />
-    </div>
-    <div class="column-flex center valuefield flex-size-1">
-      <p class="value-for-#{stat}" />
-    </div>
+    div(class="column-flex center valuefield flex-size-1")
+      p(class="roll-for-" + stat)
+    div(class="column-flex center valuefield flex-size-1")
+      p(class="value-for-" + stat)
     if edit
       div(class="column-flex center positive button flex-size-1" onclick="increaseStat('" + stat + "')")
         p +
@@ -20,47 +18,39 @@ mixin statrow(stat, statname, desc)
     else
       div(class="column-flex center valuefield flex-size-1")
         p(class="points-for-" + stat)
-  </div>
 
 html
   head
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    meta(name="viewport" content="width=device-width, initial-scale=1")
     title Sheet for #{name}
     style
       include styles/main.css
+
   body
-    <div class="content">
-      <header class="block">
-        <p><i>The sheet of</i></p>
+    div(class="content")
+      header(class="block")
+        i The sheet of
         h1#charactername #{name}
-        <h3>Destroyer of worlds</h3>
-      </header>
-      <div class="tabs">
-         <div class="tab" data-active="false">
-            <h3>Lore</h3>
-         </div>
-         <div class="tab" data-active="true">
-            <h3>Characteristics</h3>
-         </div>
-         <div class="tab" data-active="false">
-            <h3>Skills & Talents</h3>
-         </div>
-         <div class="tab" data-active="false">
-            <h3>Powers & Modifiers</h3>
-         </div>
-      </div>
-      <div class="stats-content block">
-        <div class="column">
-          <div class="flexed-statblock">
-            <div class="title column-flex center flex-size-7">
-              <p>Characteristics</p>
-            </div>
-            <div class="column-flex center flex-size-1">
-              <p class="icon" title="Roll">🎲</p>
-            </div>
-              <div class="column-flex center flex-size-1">
-              <p class="icon" title="Total">= </p>
-            </div>
+        h3 Destroyer of worlds
+      div(class="tabs")
+         div(class="tab" data-active="false")
+            h3 Lore
+         div(class="tab" data-active="true")
+            h3 Characteristics
+         div(class="tab" data-active="false")
+            h3 Skills & Talents
+         div(class="tab" data-active="false")
+            h3 Powers & Modifiers
+      div(class="stats-content block")
+        div(class="column")
+          div(class="flexed-statblock")
+            div(class="title column-flex center flex-size-7")
+              p Characteristics
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Roll") 🎲
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Total") =
+
             if edit
               div(class="column-flex center flex-size-3")
                 p(class="icon" title="Points") 💯
@@ -68,7 +58,6 @@ html
               div(class="column-flex center flex-size-1")
                 p(class="icon" title="Points") 💯
 
-          </div>
           +statrow("str", "Strength", "Strength is streangth 💪, dummy!")
           +statrow("dex", "Dexterity", "Makes you dexterous and fast! 🏃")
           +statrow("con", "Constitution", "Makes you healthy and hardy! ❤️️")
@@ -86,144 +75,101 @@ html
           +statrow("end", "Endurance", "Makes you able to endure the toughest situations! 🚴")
           +statrow("body", "Body", "Makes your body endure more suffering 🤒")
           +statrow("stun", "Stun", "Makes your head withstand more before getting stunned 🤕")
-        </div>
-        <div class="column">
-          <div class="flexed-statblock">
-            <div class="title column-flex center flex-size-7">
-              <p>Experience Points</p>
-            </div>
-            <div class="column-flex center flex-size-1">
-              <p class="icon" title="Total">✨</p>
-            </div>
-          </div>
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Total experience gained">
-                <p>Total</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p class="total-exp"></p>
-            </div>
-          </div>
+        div(class="column")
+          div(class="flexed-statblock")
+            div(class="title column-flex center flex-size-7")
+              p Experience Points
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Total") ✨
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Total experience spent">
-                <p>Spent</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p class="spent-exp"></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Total experience gained")
+                p Total
+            div(class="column-flex center valuefield flex-size-1")
+              p(class="total-exp")
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Total experience to be spent">
-                <p>Unspent</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p class="unspent-exp"></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Total experience spent")
+                p Spent
+            div(class="column-flex center valuefield flex-size-1")
+              p(class="spent-exp")
 
-          <div class="flexed-statblock">
-            <div class="title column-flex center flex-size-7">
-              <p>Current Status</p>
-            </div>
-            <div class="column-flex center flex-size-1">
-              <p class="icon" title="Current/Total">❤️️</p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Total experience to be spent")
+                p Unspent
+            div(class="column-flex center valuefield flex-size-1")
+              p(class="unspent-exp")
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Current Endurance Status / Maximum Endurance Status">
-                <p>Endurance</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p><span class="current-end"></span>/<span class="value-for-end"></span></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="title column-flex center flex-size-7")
+              p Current Status
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Current/Total") ❤️️
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Current Body Status / Maximum Body Status">
-                <p>Body</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p><span class="current-body"></span>/<span class="value-for-body"></span></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Current Endurance Status / Maximum Endurance Status")
+                p Endurance
+            div(class="column-flex center valuefield flex-size-1")
+              p
+                span(class="current-end") /
+                  span(class="value-for-end")
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Current Stun Status / Maximum Stun Status">
-                <p>Stun</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p><span class="current-stun"></span>/<span class="value-for-stun"></span></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Current Body Status / Maximum Body Status")
+                p Body
+            div(class="column-flex center valuefield flex-size-1")
+              p
+                span(class="current-body") /
+                  span(class="value-for-body")
 
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Current Stun Status / Maximum Stun Status")
+                p Stun
+            div(class="column-flex center valuefield flex-size-1")
+              p
+                span(class="current-stun") /
+                  span(class="value-for-stun")
 
-          <div class="flexed-statblock">
-            <div class="title column-flex center flex-size-7">
-              <p>Strength Information</p>
-            </div>
-            <div class="column-flex center flex-size-1">
-              <p class="icon" title="Total">💪️</p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="title column-flex center flex-size-7")
+              p Strength Information
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Total") 💪️
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="Damage roll for Hand-to-hand combat">
-                <p>Hand-to-Hand Damage</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p class="hand-to-hand-dmg"></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="Damage roll for Hand-to-hand combat")
+                p Hand-to-Hand Damage
+            div(class="column-flex center valuefield flex-size-1")
+              p(class="hand-to-hand-dmg")
 
-          <div class="flexed-statblock">
-            <div class="nameplate flex-size-7">
-              <div class="column-flex center name" title="The weight limit for lifting.">
-                <p>Lift</p>
-              </div>
-            </div>
-            <div class="column-flex center valuefield flex-size-1">
-              <p class="lift-weight"></p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="nameplate flex-size-7")
+              div(class="column-flex center name" title="The weight limit for lifting.")
+                p Lift
+            div(class="column-flex center valuefield flex-size-1")
+              p(class="lift-weight")
 
-          <div class="flexed-statblock">
-            <div class="title column-flex center flex-size-7">
-              <p>Description</p>
-            </div>
-            <div class="column-flex center flex-size-1">
-              <p class="icon" title="Description">💬️</p>
-            </div>
-          </div>
+          div(class="flexed-statblock")
+            div(class="title column-flex center flex-size-7")
+              p Description
+            div(class="column-flex center flex-size-1")
+              p(class="icon" title="Description") 💬️
 
-          <div class="statblock-3">
-            <div class="input-stuffer">
+          div(class="statblock-3")
+            div(class="input-stuffer")
               if edit
                 textarea(id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
               else
                 textarea(readonly=true id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
     <script>var exports = {};
       include ../js/netdb.js
       include ../js/characterUtils.js
