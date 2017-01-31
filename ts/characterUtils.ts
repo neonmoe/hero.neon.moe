@@ -17,6 +17,10 @@ export default class CharacterUtils {
     return vals[Math.max(0, Math.min(vals.length - 1, CharacterUtils.getValue("str", strPoints)))];
   }
 
+  static getMaxTextLength(textstat: string): number {
+    return CharacterUtils.textMaxLengths[textstat];
+  }
+
   static getSpentExperience(netdb: any) {
     const vals = CharacterUtils.characteristicValues;
     let total = 0;
@@ -52,4 +56,8 @@ export default class CharacterUtils {
   ];
 
   static statusCharacteristics = [ "end", "body", "stun" ];
+
+  static textStats = [ "description" ];
+
+  static textMaxLengths = { "description": 500 };
 }

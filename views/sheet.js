@@ -1,7 +1,6 @@
 var addressParts = window.location.toString().substring(window.location.host.length + "http://".length).split("/");
 var characterName = addressParts[3];
 var worldName = addressParts[2];
-console.log("Name: " + characterName + ", world: " + worldName);
 var netdb = new NetDB();
 update(0);
 
@@ -34,6 +33,13 @@ function decreaseStat(stat) {
   }
 }
 
+function setTextStat(stat) {
+  var req = new XMLHttpRequest();
+  req.open("GET", "http://" + window.location.host + "/c/a/" + worldName + "/" + characterName + "/update-text-stat/" + stat);
+  req.setRequestHeader("Stat-Value", document.querySelector("#textstat-" + stat).value);
+  req.send();
+}
+
 // Frontend stuff
 function updateFrontend() {
   Object.keys(CharacterUtils.characteristicValues).forEach((stat) => {
@@ -44,6 +50,7 @@ function updateFrontend() {
   updateFrontendForExp();
   updateFrontendForStr();
   updateFrontendForStatus();
+  updateFrontendForTextStats();
 }
 
 function updateFrontendForStat(stat) {
@@ -68,6 +75,15 @@ function updateFrontendForStr() {
 function updateFrontendForStatus() {
   CharacterUtils.statusCharacteristics.forEach(stat => {
     updateClasses("current-" + stat, netdb.get("current-" + stat));
+  });
+}
+
+function updateFrontendForTextStats() {
+  CharacterUtils.textStats.forEach(stat => {
+    document.querySelectorAll("." + "textstat-" + stat).forEach(elem => {
+      elem.value = netdb.get("textstat-" + stat);
+      elem.maxLength = CharacterUtils.getMaxTextLength(stat);
+    });
   });
 }
 

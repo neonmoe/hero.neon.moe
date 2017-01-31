@@ -14,7 +14,7 @@ export module Sheetview {
         res.render("403");
       } else {
         let edit = Authentication.permission.reqHas(character.editPL, req);
-        res.render("sheet", {name: name, edit: edit});
+        res.render("sheet", {name: Universe.getCharacter(world, name).name, edit: edit});
       }
     } else {
       res.render("createcharacter", {
@@ -53,6 +53,9 @@ export module Sheetview {
             CharacterUtils.decreaseStat(netdb, stat);
           }
           res.send("OK");
+          break;
+        case "update-text-stat":
+          netdb.updateValue("textstat-" + req.params.value, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(req.params.value)));
           break;
         case "sync":
           let value = netdb.getNewValues(parseInt(req.params.value));
