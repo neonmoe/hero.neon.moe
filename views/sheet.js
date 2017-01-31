@@ -1,5 +1,5 @@
 var addressParts = window.location.toString().substring(window.location.host.length + "http://".length).split("/");
-var characterName = addressParts[3];
+var characterName = addressParts[3].split("#")[0];
 var worldName = addressParts[2];
 var netdb = new NetDB();
 update(0);
