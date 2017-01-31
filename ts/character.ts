@@ -18,8 +18,8 @@ export default class Character {
       this.database.updateValue(stat, 0);
     });
     this.database.updateValue("exp", 50);
-    Object.keys(CharacterUtils.statusCharacteristics).forEach(stat => {
-      this.database.updateValue("current-" + stat, 50);
+    CharacterUtils.statusCharacteristics.forEach(stat => {
+      this.database.updateValue("current-" + stat, CharacterUtils.getValue(stat, database.get(stat)));
     });
     CharacterUtils.textStats.forEach(stat => {
       this.database.updateValue("textstat-" + stat, "");
