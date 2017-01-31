@@ -42,24 +42,31 @@ export module Sheetview {
     let world = req.params.world;
     let name = req.params.name;
     if (Universe.characterExists(world, name)) {
-      let netdb = Universe.getCharacter(world, name).database;
+      let character = Universe.getCharacter(world, name);
+      let netdb = character.database;
       switch (req.params.action) {
         case "update-stat":
-          let args = req.params.value.split("-");
-          let stat = args[1];
-          if (args[0] == "up") {
-            CharacterUtils.increaseStat(netdb, stat);
-          } else {
-            CharacterUtils.decreaseStat(netdb, stat);
+          if (Authentication.permission.reqHas(character.editPL, req)) {
+            let args = req.params.value.split("-");
+            let stat = args[1];
+            if (args[0] == "up") {
+              CharacterUtils.increaseStat(netdb, stat);
+            } else {
+              CharacterUtils.decreaseStat(netdb, stat);
+            }
+            res.send("OK");
           }
-          res.send("OK");
           break;
         case "update-text-stat":
-          netdb.updateValue("textstat-" + req.params.value, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(req.params.value)));
+          if (Authentication.permission.reqHas(character.editPL, req)) {
+            netdb.updateValue("textstat-" + req.params.value, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(req.params.value)));
+          }
           break;
         case "sync":
-          let value = netdb.getNewValues(parseInt(req.params.value));
-          res.send(value);
+          if (Authentication.permission.reqHas(character.viewPL, req)) {
+            let value = netdb.getNewValues(parseInt(req.params.value));
+            res.send(value);
+          }
           break;
       }
     }
