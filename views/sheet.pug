@@ -215,7 +215,10 @@ html
 
           <div class="statblock-3">
             <div class="input-stuffer">
-              <textarea id="textstat-description" class="textstat-description" onchange="setTextStat('description')"></textarea>
+              if edit
+                textarea(id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
+              else
+                textarea(readonly=true id="textstat-description" class="textstat-description" onchange="setTextStat('description')")
             </div>
           </div>
         </div>
