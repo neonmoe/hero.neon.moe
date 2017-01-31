@@ -24,20 +24,6 @@ export module Sheetview {
     }
   }
 
-  export function create(req: express.Request, res: express.Response) {
-    let world = req.params.world;
-    let name = req.params.name;
-    let worldmissing = !Universe.worldExists(world);
-    if (!Universe.createCharacter(world, name)) {
-      res.render("createcharacter", {
-        name: name, world: world, popLimit: true,
-        creation: false, worldmissing: worldmissing
-      });
-    } else {
-      res.redirect("/c/" + world + "/" + name);
-    }
-  }
-
   export function action(req: express.Request, res: express.Response) {
     let world = req.params.world;
     let name = req.params.name;

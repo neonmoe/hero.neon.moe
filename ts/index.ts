@@ -18,8 +18,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/c/:world/:name", Sheetview.view); // View a character :name in :world
-app.get("/c/n/:world/:name", Sheetview.create); // Create character :name to :world
 app.get("/c/a/:world/:name/:action/:value", Sheetview.action); // Do :action for :name in :world with :value
+app.get("/u/wl/", Universe.tellWorldsToReq); // Universe, WorldList
+app.get("/u/cc/:world", Universe.canCreateCharacter) // Universe, CanCreate (Character)
+app.post("/u/nc/:world/:name", Universe.createCharacterOnRequest); // Universe, NewCharacter
 app.post("/a/generate", Authentication.generateUser); // Generate a new account
 app.get("/a", Authentication.view); // View current account
 app.get("/a/:handle", Authentication.view); // View account at :handle
@@ -57,8 +59,8 @@ Commander.registerCommand("log", (args: Commander.Arguments) => {
 
 app.listen(8863, _ => {
   console.log("Firing up hero.neon.moe...");
-  Universe.createWorld("DBL");
-  Universe.createCharacter("DBL", "Bob");
+  Universe.createWorld("Heaven");
+  Universe.createCharacter("Heaven", "Jesus", "God");
   console.log("Ready to rock and roll on port 8863!");
   Commander.startListening();
 });
