@@ -1,6 +1,15 @@
 export default class CharacterUtils {
-  static getRoll(points: number): number {
-    return 9 + Math.floor(points / 5);
+  static getRoll(netdb: any, stat: string): number {
+    if (Object.keys(CharacterUtils.characteristicValues).indexOf(stat) != -1) {
+      let points = netdb.getAsInt(stat);
+      return 9 + Math.floor(points / 5);
+    } else if (stat.indexOf("skill-") == 0) {
+      let points = netdb.getAsInt(netdb.get(stat + "-char"));
+      let bonus = netdb.getAsInt(stat) / netdb.getAsInt(stat + "-cost");
+      return 9 + Math.floor(points / 5) + bonus;
+    } else {
+      return -1;
+    }
   }
 
   static getValue(stat: string, points: number): number {

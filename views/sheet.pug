@@ -257,6 +257,7 @@ html
                   p(class="icon" title="Delete") ❌
 
               div(id="skilllist")
+                <!-- Example skill statblock -->
                 div(class="flexed-statblock" id="skillname-to-be-replaced")
                   div(class="nameplate flex-size-4")
                     div(class="column-flex center")
@@ -271,6 +272,7 @@ html
                     p -
                   div(class="column-flex center button negative flex-size-1" onclick="removeSkill('skillname-to-be-replaced')")
                     p Delete
+                <!-- End of example skill statblock -->
 
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-8")
@@ -282,10 +284,26 @@ html
                 div(class="nameplate flex-size-1")
                   div(class="column-flex center")
                     p Name:
-                div(class="column-flex center valuefield flex-size-4")
+                div(class="column-flex center valuefield flex-size-2")
                   input(type="text" id="skillname")
-                div(class="column-flex center valuefield flex-size-3")
-                  p
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Base exp:
+                div(class="column-flex center valuefield flex-size-1")
+                  input(type="number" id="skillbase" value=0)
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Exp per +1:
+                div(class="column-flex center valuefield flex-size-1")
+                  input(type="number" id="skillcost" value=0)
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Characteristic:
+                div(class="column-flex center valuefield flex-size-1")
+                  select(id="skillchar")
+                    option(selected=true) Str
+                    option Int
+                    option Dex
                 div(class="column-flex center button positive flex-size-1" onclick=("createSkill()"))
                   p Create
 
@@ -321,7 +339,7 @@ html
                   option Dexterity
                   option Intelligence
               div(class="column-flex center valuefield flex-size-1")
-                input(type="number")
+                input(type="number" value=0)
               div(class="column-flex center button positive flex-size-1")
                 p Add
 

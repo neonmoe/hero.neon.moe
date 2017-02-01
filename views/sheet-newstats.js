@@ -4,10 +4,13 @@ document.querySelector("#skillname-to-be-replaced").style.display = "none";
 
 function createSkill() {
   let skillName = "skill-" + Namer.convertNameToKey(document.querySelector("#skillname").value);
-  let char = "dex";//document.querySelector("#skillname-char").value;
-  let base = 3;//parseInt(document.querySelector("#skillname-base").value);
-  let cost = 2;//parseInt(document.querySelector("#skillname-cost").value);
+  let char = document.querySelector("#skillchar").value.toLowerCase();
+  let base = parseInt(document.querySelector("#skillbase").value);
+  let cost = parseInt(document.querySelector("#skillcost").value);
   document.querySelector("#skillname").value = "";
+  document.querySelector("#skillbase").value = 0;
+  document.querySelector("#skillcost").value = 0;
+  console.log(skillName + ", " + char + ", " + base + ", " + cost);
   // Visible HTML stuff
   loadSkill(skillName);
   // Invisible backend stuff

@@ -56,7 +56,7 @@ function updateFrontend(changedStats) {
   if (textUpdated) {
     updateFrontendForTextStats();
   }
-  if (skillsUpdated) {
+  if (statsUpdated || skillsUpdated) {
     updateFrontendForSkills(changedStats.filter(c => CharacterUtils.isSkill(c)));
   }
 }
@@ -65,7 +65,7 @@ function updateFrontendForStat(stat) {
   updateClasses("points-for-" + stat, netdb.get(stat));
   updateClasses("value-for-" + stat, CharacterUtils.getValue(stat, netdb.get(stat)));
   if (CharacterUtils.characteristicValues[stat][3]) {
-    updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb.get(stat)));
+    updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb, stat));
   }
 }
 
@@ -103,7 +103,7 @@ function updateFrontendForSkills(skills) {
       loadSkill(skill);
     }
     updateClasses("points-for-" + skill, netdb.get(skill));
-    updateClasses("roll-for-" + skill, CharacterUtils.getRoll(netdb.get(skill)));
+    updateClasses("roll-for-" + skill, CharacterUtils.getRoll(netdb, skill));
   });
 }
 
