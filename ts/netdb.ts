@@ -13,6 +13,15 @@ export default class NetDB {
     return this.values[key];
   }
 
+  initializeKey(key: string, syncTime: number = NetDB.getTime()) {
+    if (Object.keys(this.values).indexOf(key) == -1) {
+      this.syncTimes[key] = syncTime;
+      this.values[key] = 0;
+    } else {
+      console.log("Tried to initialize " + key + " but it already exists on this NetDB!");
+    }
+  }
+
   updateValue(key: string, value: any, syncTime: number = NetDB.getTime()) {
     if (Object.keys(this.values).indexOf(key) == -1 || this.syncTimes[key] < syncTime) {
       this.syncTimes[key] = syncTime;

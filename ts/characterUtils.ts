@@ -4,8 +4,12 @@ export default class CharacterUtils {
   }
 
   static getValue(stat: string, points: number): number {
-    let vals = CharacterUtils.characteristicValues[stat];
-    return Math.round(vals[0] + points / vals[1] * vals[2]);
+    if (CharacterUtils.characteristicValues[stat]) {
+      let vals = CharacterUtils.characteristicValues[stat];
+      return Math.round(vals[0] + points / vals[1] * vals[2]);
+    } else {
+      return Math.round(points);
+    }
   }
 
   static getHTHDmg(strPoints: number): number {
@@ -30,15 +34,19 @@ export default class CharacterUtils {
     return total;
   }
 
+  static getExpForStat(stat: string) {
+    return CharacterUtils.characteristicValues[stat] ? CharacterUtils.characteristicValues[stat][1] : 1;
+  }
+
   static increaseStat(netdb: any, stat: string) {
-    const exp = CharacterUtils.characteristicValues[stat][1];
+    let exp = CharacterUtils.getExpForStat(stat);
     if (CharacterUtils.getSpentExperience(netdb) + exp <= netdb.get("exp")) {
       netdb.updateValue(stat, netdb.get(stat) + exp);
     }
   }
 
   static decreaseStat(netdb: any, stat: string) {
-    const exp = CharacterUtils.characteristicValues[stat][1];
+    let exp = CharacterUtils.getExpForStat(stat);
     if (CharacterUtils.getSpentExperience(netdb) - exp >= 0 &&
         netdb.get(stat) - exp >= 0) {
       netdb.updateValue(stat, netdb.get(stat) - exp);

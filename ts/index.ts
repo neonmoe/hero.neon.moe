@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.get("/c/:world/:name", Sheetview.view); // View a character :name in :world
 app.get("/c/a/:world/:name/:action/:value", Sheetview.action); // Do :action for :name in :world with :value
+app.get("/c/a/:world/:name/:action/:value/:value1", Sheetview.action); // Same as ^ but with a secondary value
 app.get("/u/wl/", Universe.tellWorldsToReq); // Universe, WorldList
 app.get("/u/cc/:world", Universe.canCreateCharacter) // Universe, CanCreate (Character)
 app.post("/u/nc/:world/:name", Universe.createCharacterOnRequest); // Universe, NewCharacter

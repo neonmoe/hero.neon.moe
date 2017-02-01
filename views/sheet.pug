@@ -255,20 +255,21 @@ html
                 div(class="column-flex center flex-size-1")
                   p(class="icon" title="Delete") ❌
 
-              div(class="flexed-statblock")
-                div(class="nameplate flex-size-4")
-                  div(class="column-flex center")
-                    p Example skill
-                div(class="column-flex center valuefield flex-size-1")
-                  p 0
-                div(class="column-flex center button positive flex-size-1")
-                  p +
-                div(class="column-flex center valuefield flex-size-1")
-                  p 0
-                div(class="column-flex center button negative flex-size-1")
-                  p -
-                div(class="column-flex center button negative flex-size-1")
-                  p Delete
+              div(id="skilllist")
+                div(class="flexed-statblock" id="exampleskill")
+                  div(class="nameplate flex-size-4")
+                    div(class="column-flex center")
+                      p skillname-to-be-replaced
+                  div(class="column-flex center valuefield flex-size-1")
+                    p(class="roll-for-skillname-to-be-replaced") 0
+                  div(class="column-flex center button positive flex-size-1" onclick="increaseStat('skillname-to-be-replaced')")
+                    p +
+                  div(class="column-flex center valuefield flex-size-1")
+                    p(class="points-for-skillname-to-be-replaced") 0
+                  div(class="column-flex center button negative flex-size-1" onclick="decreaseStat('skillname-to-be-replaced')")
+                    p -
+                  div(class="column-flex center button negative flex-size-1")
+                    p Delete
 
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-8")
@@ -281,10 +282,10 @@ html
                   div(class="column-flex center")
                     p Name:
                 div(class="column-flex center valuefield flex-size-4")
-                  input(type="text")
+                  input(type="text" id="skillname")
                 div(class="column-flex center valuefield flex-size-3")
                   p
-                div(class="column-flex center button positive flex-size-1")
+                div(class="column-flex center button positive flex-size-1" onclick=("createSkill()"))
                   p Create
 
         div(class="tabcontent" data-active="false" data-tab="powers")
@@ -370,7 +371,9 @@ html
 
     <script>var exports = {};
       include sheet-tabs.js
+      include ../js/namer.js
       include ../js/netdb.js
       include ../js/characterUtils.js
       include sheet.js
+      include sheet-newstats.js
     </script>
