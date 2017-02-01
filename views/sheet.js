@@ -56,7 +56,9 @@ function updateFrontend() {
 function updateFrontendForStat(stat) {
   updateClasses("points-for-" + stat, netdb.get(stat));
   updateClasses("value-for-" + stat, CharacterUtils.getValue(stat, netdb.get(stat)));
-  updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb.get(stat)));
+  if (CharacterUtils.characteristicValues[stat][3]) {
+    updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb.get(stat)));
+  }
 }
 
 function updateFrontendForExp() {
@@ -84,6 +86,7 @@ function updateFrontendForTextStats() {
     elem.value = netdb.get("textstat-" + stat).replace(/\\n/g, "\n");
     elem.maxLength = CharacterUtils.getMaxTextLength(stat);
   });
+  document.querySelector("#charactername").innerHTML = document.querySelector("#textstat-charactername").value;
 }
 
 function updateClasses(name, value) {
