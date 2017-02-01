@@ -15,8 +15,7 @@ export module FileReadWrite {
     }
     let folderpart = path.split("/").slice(0, -1).join("/");
     try {
-      let stats = FileSystem.statSync(folderpart);
-      if (!stats.isDirectory()) {
+      if (!FileSystem.existsSync(folderpart)) {
         FileSystem.mkdirSync(folderpart);
       }
       FileSystem.writeFileSync(path, text, {
@@ -36,12 +35,13 @@ export module FileReadWrite {
       path += ".json";
     }
     try {
-      let stats = FileSystem.statSync(path);
-      if (stats.isFile()) {
+      if (FileSystem.existsSync(path)) {
         let text = FileSystem.readFileSync(path, {
           encoding: "utf-8"
         });
         return text;
+      } else {
+        console.log(`${path} not found.`)
       }
     } catch (e) {
       console.log("Something went wrong, try with a simpler path, or make sure the path exists");
