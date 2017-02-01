@@ -127,18 +127,14 @@ export module FileReadWrite {
 
     // Create new save
     // Create the name for the save (Format: 'auto-042321-01022017')
-    let saveName = autosaves + "auto-";
-    let date = new Date();
-    saveName += ('0' + date.getSeconds()).slice(-2);
-    saveName += ('0' + date.getMinutes()).slice(-2);
-    saveName += ('0' + date.getHours()).slice(-2) + "-";
-    saveName += ('0' + date.getDate()).slice(-2);
-    saveName += ('0' + date.getMonth()).slice(-2);
-    saveName += ('0' + date.getFullYear()).slice(-2);
+    let saveName;
+    do {
+      saveName = autosaves + "auto-" + Namer.generateRandomName();
+    } while (FileSystem.existsSync(saveName));
 
     let savedTo = saveUniverseTo(saveName);
     if (savedTo) {
-      console.log(`Automatically saved universe to ""${savedTo}"`);
+      console.log(`Automatically saved universe to "${savedTo}"`);
     } else {
       console.error("Automatic save of the universe failed.")
     }

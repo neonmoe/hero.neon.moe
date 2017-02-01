@@ -2,6 +2,7 @@ import * as readline from "readline";
 
 export module Commander {
   let values: {[key: string]: Function} = {};
+  let reader: readline.ReadLine;
 
   export function registerCommand(command: string, func: Function) {
     values[command] = func;
@@ -9,6 +10,9 @@ export module Commander {
 
   export function callCommand(callingText: string) {
     let commandEndIndex = callingText.indexOf(" ");
+    if (commandEndIndex == -1) {
+      commandEndIndex = callingText.length;
+    }
     let command = callingText.substring(0, commandEndIndex);
     let argumentsText = callingText.substring(commandEndIndex + 1);
     if (values[command]) {
@@ -17,12 +21,16 @@ export module Commander {
   }
 
   export function startListening() {
-    let reader = readline.createInterface({
+    reader = readline.createInterface({
       input: process.stdin, output: process.stdout
     });
     reader.on("line", (line: string) => {
       callCommand(line.trim());
     });
+  }
+
+  export function stopListening() {
+    reader.close();
   }
 
   export class Arguments {
