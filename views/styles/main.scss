@@ -352,7 +352,7 @@ html, body {
 
           h3 {
             margin: 0em;
-            padding: 0.2em;
+            padding-bottom: 0.2em;
           }
         }
       }
@@ -388,6 +388,10 @@ html, body {
    .content {
       width: 100%;
       min-width: 0px;
+   }
+
+   .flex-parent {
+     display: block;
    }
 }
 
