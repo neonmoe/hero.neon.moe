@@ -37,13 +37,18 @@ app.get("/*", (req, res) => {
   res.render("404", {});
 });
 
-Commander.registerCommand("save", FileReadWrite.backupCmd);
-Commander.registerCommand("load", FileReadWrite.backupLoadCmd);
+Commander.registerCommand("save", FileReadWrite.saveCmd);
+Commander.registerCommand("load", FileReadWrite.loadCmd);
+
 
 app.listen(8863, _ => {
   console.log("Firing up hero.neon.moe...");
   Universe.createWorld("Heaven");
   Universe.createCharacter("Heaven", "Jesus", "God");
-  console.log("Ready to rock and roll on port 8863!");
+  console.log("Ready to rock and roll on port 8863!\n");
   Commander.startListening();
+
+  // Load newest autosave and start autosaving every 60000 milliseconds
+  FileReadWrite.loadNewestAutosave();
+  setInterval(FileReadWrite.createNewAutosave, 60000);
 });

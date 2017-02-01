@@ -1,6 +1,6 @@
 node_modules
 *.~
-backups/*
+saves/*
 views/styles/*.css
 views/styles/*.css.map
 views/styles/.sass-cache
