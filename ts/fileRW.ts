@@ -23,7 +23,7 @@ export module FileReadWrite {
       });
       return path;
     } catch (e) {
-      console.log("Something went wrong, try with a simpler path, or make sure the path exists");
+      console.log("Something went wrong, try with a simpler path, or make sure the path exists.");
       console.log(e);
       return undefined;
     }
@@ -44,7 +44,7 @@ export module FileReadWrite {
         console.log(`${path} not found.`)
       }
     } catch (e) {
-      console.log("Something went wrong, try with a simpler path, or make sure the path exists");
+      console.log("Something went wrong, try with a simpler path, or make sure the path exists.");
       console.log(e);
       return undefined;
     }
@@ -54,10 +54,10 @@ export module FileReadWrite {
 
     if (args.get("force")) {
 
-      let path = args.getAsString("as");
+      let path = args.getAsString();
       let savedTo = writeFile(Namer.convertNameToKey(path), JSON.stringify(Universe.save()));
       if (savedTo) {
-        console.log("Universe saved to " + savedTo);
+        console.log("Universe saved to " + savedTo + ".");
       }
 
     } else {
@@ -76,8 +76,10 @@ export module FileReadWrite {
       }
       if (Object.keys(data).length != 0) {
         Universe.load(data);
-        console.log("Universe loaded successfully");
+        console.log("Universe loaded successfully.");
       }
+    } else {
+      console.log("Couldn't load " + args.getAsString() + ".");
     }
   }
 }

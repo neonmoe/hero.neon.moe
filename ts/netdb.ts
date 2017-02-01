@@ -39,7 +39,6 @@ export default class NetDB {
   save(): {[key: string]: any} {
     let savedata: {[key: string]: any} = {}
     savedata["values"] = this.values;
-    savedata["syncTimes"] = this.syncTimes;
 
     return savedata;
   }
@@ -47,7 +46,9 @@ export default class NetDB {
   static load(data: {[key: string]: any}): NetDB {
     let db = new NetDB();
     db.values = data["values"];
-    db.syncTimes = data["syncTimes"];
+    Object.keys(db.values).forEach(key => {
+      db.syncTimes[key] = NetDB.getTime();
+    });
 
     return db;
   }
