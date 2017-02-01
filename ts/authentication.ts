@@ -18,9 +18,10 @@ export module Authentication {
     }
 
     getProperty() {
+      let characters = Universe.getCharactersOwnedBy(this.token);
       return {
         worlds: ["test"],
-        characters: [{name: "bob", world: "dbl"}, {name: "beb", world: "dbl"}],
+        characters: characters,
         images: ["joku.png"],
         audio: ["musa.mp4"]
       };

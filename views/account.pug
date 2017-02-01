@@ -7,7 +7,7 @@ mixin createList(properties)
           if key == "worlds"
             a(href="#") #{item}
           if key == "characters"
-            a(href="/c/" + item.world + "/" + item.name) [#{item.name}] of world [#{item.world}]
+            a(href="/c/" + item.world + "/" + item.handle) [#{item.name}] of world [#{item.world}]
           if key == "images"
             a(href="#") #{item}
           if key == "audio"

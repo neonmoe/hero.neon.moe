@@ -101,6 +101,26 @@ export module Universe {
     }
   }
 
+  export function getCharactersOwnedBy(token: string) {
+    let characters: {[key: string]: string}[] = [];
+    Object.keys(worlds).forEach(world => {
+
+      Object.keys(worlds[world]).filter(name => {
+        return Authentication.permission.has(worlds[world][name].viewPL, token) &&
+          Authentication.permission.has(worlds[world][name].editPL, token);
+      }).forEach(char => {
+
+        characters.push({
+          name: worlds[world][char].name,
+          handle: char,
+          world: world
+        });
+
+      });
+    });
+    return characters;
+  }
+
   export function load(data: {[keys: string]: any}) {
     try {
       worldPopulationLimit = data["worldPopulationLimit"];
