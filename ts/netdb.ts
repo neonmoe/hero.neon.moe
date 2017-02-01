@@ -35,4 +35,20 @@ export default class NetDB {
     });
     return updatePackage;
   }
+
+  save(): {[key: string]: any} {
+    let savedata: {[key: string]: any} = {}
+    savedata["values"] = this.values;
+    savedata["syncTimes"] = this.syncTimes;
+
+    return savedata;
+  }
+
+  static load(data: {[key: string]: any}): NetDB {
+    let db = new NetDB();
+    db.values = data["values"];
+    db.syncTimes = data["syncTimes"];
+
+    return db;
+  }
 }

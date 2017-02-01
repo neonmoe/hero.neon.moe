@@ -5,6 +5,7 @@ import {Authentication} from "./authentication";
 import {Sheetview} from "./sheetview";
 import {Universe} from "./universe";
 import {Commander} from "./commander";
+import {FileReadWrite} from "./fileRW";
 
 const app = express();
 
@@ -38,6 +39,8 @@ app.get("/*", (req, res) => {
 
 // Test/example command
 Commander.registerCommand("log", (args: Commander.Arguments) => {
+  console.log("test");
+
   let output = args.getAsString();
 
   // Uppercase the output possibly
@@ -56,6 +59,8 @@ Commander.registerCommand("log", (args: Commander.Arguments) => {
   // Display the message
   console.log(output);
 });
+Commander.registerCommand("backup", FileReadWrite.backupCmd);
+Commander.registerCommand("load", FileReadWrite.backupLoadCmd);
 
 app.listen(8863, _ => {
   console.log("Firing up hero.neon.moe...");

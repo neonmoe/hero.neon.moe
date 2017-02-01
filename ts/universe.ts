@@ -100,4 +100,43 @@ export module Universe {
       res.send("ERR");
     }
   }
+
+  export function load(data: {[keys: string]: any}) {
+    try {
+      worldPopulationLimit = data["worldPopulationLimit"];
+
+      let worldData = data["worldData"];
+      Object.keys(worldData).forEach(worldName => {
+        worlds[worldName] = {};
+        Object.keys(worldData[worldName]).forEach(character => {
+          worlds[worldName][character] = Character.load(worldData[worldName][character]);
+        });
+      });
+      Authentication.loadUserDatabase(data["userDatabase"]);
+      Authentication.permission.load(data["permissions"]);
+
+    } catch (e) {
+      console.log("Loading universe savedata failed");
+      console.log(e);
+    }
+  }
+
+  export function save(): {[keys: string]: any} {
+    let savedata: {[keys: string]: any} = {};
+    let worldData = {};
+
+    Object.keys(worlds).forEach(worldName => {
+      worldData[worldName] = {};
+      Object.keys(worlds[worldName]).forEach(character => {
+        worldData[worldName][character] = worlds[worldName][character].save();
+      });
+    });
+
+    savedata["worldData"] = worldData;
+    savedata["worldPopulationLimit"] = worldPopulationLimit;
+    savedata["userDatabase"] = Authentication.saveUserDatabase();
+    savedata["permissions"] = Authentication.permission.save();
+
+    return savedata;
+  }
 }

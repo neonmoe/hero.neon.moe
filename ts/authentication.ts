@@ -15,7 +15,6 @@ export module Authentication {
     constructor(token: string, handle: string) {
       this.token = token;
       this.handle = handle;
-      console.log(`User ${handle} has been generated with token ${token}!`);
     }
 
     getProperty() {
@@ -25,6 +24,18 @@ export module Authentication {
         images: ["joku.png"],
         audio: ["musa.mp4"]
       };
+    }
+
+    save(): {[key: string]: any} {
+      let savedata = {
+        "token": this.token,
+        "handle": this.handle
+      };
+      return savedata;
+    }
+
+    static load(data: {[key: string]: any}): User {
+      return new User(data["token"], data["handle"]);
     }
   }
 
@@ -50,6 +61,7 @@ export module Authentication {
       } while (this.handleExistsCaseInsensitive(handle))
 
       let user = new User(token, handle);
+      console.log(`User ${handle} has been generated with token ${token}!`);
       this.users[token] = user;
       this.handles[handle.toLowerCase()] = token;
       return token;
@@ -130,6 +142,21 @@ export module Authentication {
       if (this.has(id, token)) {
         this.permissions[id].splice(this.permissions[id].indexOf(token), 1);
       }
+    }
+
+    save(): {[keys: string]: any} {
+      let savedata = {
+        "counter": this.counter,
+        "permissions": this.permissions,
+        "identifiers": this.identifiers
+      }
+      return savedata;
+    }
+
+    load(data: {[keys: string]: any}) {
+      this.counter = data["counter"];
+      this.permissions = data["permissions"];
+      this.identifiers = data["identifiers"];
     }
   }
 
@@ -215,5 +242,24 @@ export module Authentication {
       res.status(403);
       res.send("Handle taken.");
     }
+  }
+
+  export function saveUserDatabase(): {[keys: string]: any} {
+    let savedata = {};
+    let users = {};
+    Object.keys(userDatabase.users).forEach(token => {
+      users[token] = userDatabase.users[token].save();
+    });
+    savedata["users"] = users;
+    savedata["handles"] = userDatabase.handles;
+
+    return savedata;
+  }
+
+  export function loadUserDatabase(data: {[keys: string]: any}) {
+    Object.keys(data["users"]).forEach(token => {
+      userDatabase["users"][token] = User.load(data["users"][token]);
+    });
+    userDatabase.handles = data["handles"];
   }
 }

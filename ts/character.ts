@@ -1,6 +1,7 @@
 import NetDB from "./netdb";
 import CharacterUtils from "./characterUtils"
 import {Authentication} from "./authentication";
+import {FileReadWrite} from "./fileRW";
 
 export default class Character {
   name: string;
@@ -28,5 +29,24 @@ export default class Character {
       }
       this.database.updateValue("textstat-" + stat, value);
     });
+  }
+
+  save(): {[key: string]: any} {
+    let savedata: {[key: string]: any} = {};
+    savedata["name"] = this.name;
+    savedata["viewPL"] = this.viewPL;
+    savedata["editPL"] = this.editPL;
+    savedata["database"] = this.database.save();
+
+    return savedata;
+  }
+
+  static load(data: {[key: string]: any}): Character {
+    let character = new Character(data["name"]);
+    character.viewPL = data["viewPL"];
+    character.editPL = data["editPL"];
+    character.database = NetDB.load(data["database"]);
+
+    return character;;
   }
 }

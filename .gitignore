@@ -1,5 +1,6 @@
 node_modules
 *.~
+backups/*
 views/styles/main.css
 views/styles/popup.css
 views/styles/.sass-cache
