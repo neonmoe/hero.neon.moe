@@ -22,7 +22,11 @@ export default class Character {
       this.database.updateValue("current-" + stat, CharacterUtils.getValue(stat, database.get(stat)));
     });
     CharacterUtils.textStats.forEach(stat => {
-      this.database.updateValue("textstat-" + stat, "");
+      let value = "";
+      if (stat == "charactername") {
+        value = name;
+      }
+      this.database.updateValue("textstat-" + stat, value);
     });
   }
 }

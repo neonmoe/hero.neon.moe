@@ -57,9 +57,9 @@ html
                 div(class="input-stuffer")
                   div(class="input-stuffer")
                     if edit
-                      textarea
+                      textarea(id="textstat-playername" onchange="setTextStat('playername')")
                     else
-                      textarea(readonly=true)
+                      textarea(id="textstat-playername" readonly=true)
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
                   p Character Name
@@ -69,9 +69,9 @@ html
                 div(class="input-stuffer")
                   div(class="input-stuffer")
                     if edit
-                      textarea
+                      textarea(id="textstat-charactername" onchange="setTextStat('charactername')")
                     else
-                      textarea(readonly=true)
+                      textarea(id="textstat-charactername" readonly=true)
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
                   p Alternate Identities
@@ -81,9 +81,9 @@ html
                 div(class="input-stuffer")
                   div(class="input-stuffer")
                     if edit
-                      textarea
+                      textarea(id="textstat-alternateidentities" onchange="setTextStat('alternateidentities')")
                     else
-                      textarea(readonly=true)
+                      textarea(id="textstat-alternateidentities" readonly=true)
 
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
@@ -93,9 +93,9 @@ html
               div(class="statblock-5")
                 div(class="input-stuffer")
                   if edit
-                    textarea
+                    textarea(id="textstat-background" onchange="setTextStat('background')")
                   else
-                    textarea(readonly=true)
+                    textarea(id="textstat-background" readonly=true)
 
             div(class="column")
               div(class="flexed-statblock")
@@ -106,9 +106,9 @@ html
               div(class="statblock-5")
                 div(class="input-stuffer")
                   if edit
-                    textarea
+                    textarea(id="textstat-looks" onchange="setTextStat('looks')")
                   else
-                    textarea(readonly=true)
+                    textarea(id="textstat-looks" readonly=true)
 
                 div(class="flexed-statblock")
                   div(class="title column-flex center flex-size-7")
@@ -118,9 +118,9 @@ html
                 div(class="statblock-5")
                   div(class="input-stuffer")
                     if edit
-                      textarea
+                      textarea(id="textstat-miscinfo" onchange="setTextStat('miscinfo')")
                     else
-                      textarea(readonly=true)
+                      textarea(id="textstat-miscinfo" readonly=true)
 
         div(class="tabcontent" data-active="false" data-tab="characteristics")
           div(class="flex-parent")

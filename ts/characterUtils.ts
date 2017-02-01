@@ -57,7 +57,7 @@ export default class CharacterUtils {
 
   static statusCharacteristics = [ "end", "body", "stun" ];
 
-  static textStats = [ "description" ];
+  static textStats = [ "playername", "charactername", "alternateidentities", "background", "looks", "miscinfo" ];
 
-  static textMaxLengths = { "description": 500 };
+  static textMaxLengths = { "playername": 100, "charactername": 100, "alternateidentities": 100, "background": 500, "looks": 500, "miscinfo": 1000 };
 }

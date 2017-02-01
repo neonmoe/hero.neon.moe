@@ -1,8 +1,10 @@
 import * as express from "express";
 import * as path from "path";
+
 import {Authentication} from "./authentication";
 import {Sheetview} from "./sheetview";
-import {Universe} from "./universe"
+import {Universe} from "./universe";
+import {Commander} from "./commander";
 
 const app = express();
 
@@ -14,7 +16,6 @@ app.get("/", (req, res) => {
     authorized: Authentication.getAuthtoken(req) !== undefined
   });
 });
-
 
 app.get("/c/:world/:name", Sheetview.view); // View a character :name in :world
 app.get("/c/a/:world/:name/:action/:value", Sheetview.action); // Do :action for :name in :world with :value
@@ -35,9 +36,31 @@ app.get("/*", (req, res) => {
   res.render("404", {});
 });
 
+// Test/example command
+Commander.registerCommand("log", (args: Commander.Arguments) => {
+  let output = args.getAsString();
+
+  // Uppercase the output possibly
+  if (args.get("uppercase")) {
+    output = output.toUpperCase();
+  }
+
+  // Set the category
+  let category = args.getAsString("category");
+  if (category.length > 0) {
+    output = "[" + category.toUpperCase() + "] " + output;
+  } else {
+    output = "[LOG] " + output;
+  }
+
+  // Display the message
+  console.log(output);
+});
+
 app.listen(8863, _ => {
   console.log("Firing up hero.neon.moe...");
   Universe.createWorld("Heaven");
   Universe.createCharacter("Heaven", "Jesus", "God");
   console.log("Ready to rock and roll on port 8863!");
+  Commander.startListening();
 });
