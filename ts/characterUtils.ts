@@ -39,9 +39,8 @@ export default class CharacterUtils {
 
   static decreaseStat(netdb: any, stat: string) {
     const exp = CharacterUtils.characteristicValues[stat][1];
-    const valueInc = CharacterUtils.characteristicValues[stat][2];
     if (CharacterUtils.getSpentExperience(netdb) - exp >= 0 &&
-        CharacterUtils.getValue(stat, netdb.get(stat)) - valueInc >= 0) {
+        netdb.get(stat) - exp >= 0) {
       netdb.updateValue(stat, netdb.get(stat) - exp);
     }
   }

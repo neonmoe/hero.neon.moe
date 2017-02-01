@@ -37,29 +37,7 @@ app.get("/*", (req, res) => {
   res.render("404", {});
 });
 
-// Test/example command
-Commander.registerCommand("log", (args: Commander.Arguments) => {
-  console.log("test");
-
-  let output = args.getAsString();
-
-  // Uppercase the output possibly
-  if (args.get("uppercase")) {
-    output = output.toUpperCase();
-  }
-
-  // Set the category
-  let category = args.getAsString("category");
-  if (category.length > 0) {
-    output = "[" + category.toUpperCase() + "] " + output;
-  } else {
-    output = "[LOG] " + output;
-  }
-
-  // Display the message
-  console.log(output);
-});
-Commander.registerCommand("backup", FileReadWrite.backupCmd);
+Commander.registerCommand("save", FileReadWrite.backupCmd);
 Commander.registerCommand("load", FileReadWrite.backupLoadCmd);
 
 app.listen(8863, _ => {
