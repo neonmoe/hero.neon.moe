@@ -35,6 +35,7 @@ function updateFrontend(changedStats) {
   let statusUpdated = changedStats.filter(c => CharacterUtils.statusCharacteristics.indexOf(c.substring(8)) != -1).length > 0;
   // The .subtring(9) part is there to cut off the "textstat-" part.
   let textUpdated = changedStats.filter(c => CharacterUtils.textStats.indexOf(c.substring(9)) != -1).length > 0;
+  let skillsUpdated = changedStats.filter(c => CharacterUtils.isSkill(c)).length > 0;
 
   if (statsUpdated) {
     Object.keys(CharacterUtils.characteristicValues).forEach((stat) => {
@@ -46,7 +47,7 @@ function updateFrontend(changedStats) {
       updateFrontendForStr();
     }
   }
-  if (statsUpdated || changedStats.indexOf("exp") != -1) {
+  if (statsUpdated || skillsUpdated || changedStats.indexOf("exp") != -1) {
     updateFrontendForExp();
   }
   if (statusUpdated) {
@@ -55,12 +56,15 @@ function updateFrontend(changedStats) {
   if (textUpdated) {
     updateFrontendForTextStats();
   }
+  if (skillsUpdated) {
+    updateFrontendForSkills(changedStats.filter(c => CharacterUtils.isSkill(c)));
+  }
 }
 
 function updateFrontendForStat(stat) {
   updateClasses("points-for-" + stat, netdb.get(stat));
   updateClasses("value-for-" + stat, CharacterUtils.getValue(stat, netdb.get(stat)));
-  if (Object.keys(CharacterUtils.characteristicValues).indexOf(stat) == -1 || CharacterUtils.characteristicValues[stat][3]) {
+  if (CharacterUtils.characteristicValues[stat][3]) {
     updateClasses("roll-for-" + stat, CharacterUtils.getRoll(netdb.get(stat)));
   }
 }
@@ -91,6 +95,16 @@ function updateFrontendForTextStats() {
     elem.maxLength = CharacterUtils.getMaxTextLength(stat);
   });
   document.querySelector("#charactername").innerHTML = document.querySelector("#textstat-charactername").value;
+}
+
+function updateFrontendForSkills(skills) {
+  skills.forEach(skill => {
+    if (!document.querySelector("#" + skill)) {
+      loadSkill(skill);
+    }
+    updateClasses("points-for-" + skill, netdb.get(skill));
+    updateClasses("roll-for-" + skill, CharacterUtils.getRoll(netdb.get(skill)));
+  });
 }
 
 function updateClasses(name, value) {

@@ -48,9 +48,13 @@ export module Sheetview {
             netdb.updateValue("textstat-" + val, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(val)));
           }
           break;
-        case "init-stat":
+        case "init-skill":
           if (Authentication.permission.reqHas(character.editPL, req)) {
-            netdb.initializeKey(val);
+            let skillProps = val1.split("-");
+            netdb.updateValue(val, 0);
+            netdb.updateValue(val + "-char", skillProps[0]);
+            netdb.updateValue(val + "-base", skillProps[1]);
+            netdb.updateValue(val + "-cost", skillProps[2]);
           }
           break;
         case "sync":

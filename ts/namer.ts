@@ -22,6 +22,11 @@ export default class Namer {
     return name.toLowerCase().replace(" ", "-");
   }
 
+  /** For prettifying keys. */
+  static convertKeyToName(key: string) {
+    return key.split("-").map(c => c.substring(0, 1).toUpperCase() + c.substring(1)).join(" ");
+  }
+
   /** Generate a string of hex characters at specified length */
   static generateHexString(length: number) {
     return Array.apply(null, new Array(length)).map(c => Namer.chars[Math.floor(Math.random() * Namer.chars.length)]).join('');

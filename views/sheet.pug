@@ -256,10 +256,10 @@ html
                   p(class="icon" title="Delete") ❌
 
               div(id="skilllist")
-                div(class="flexed-statblock" id="exampleskill")
+                div(class="flexed-statblock" id="skillname-to-be-replaced")
                   div(class="nameplate flex-size-4")
                     div(class="column-flex center")
-                      p skillname-to-be-replaced
+                      p visible-skillname-to-be-replaced
                   div(class="column-flex center valuefield flex-size-1")
                     p(class="roll-for-skillname-to-be-replaced") 0
                   div(class="column-flex center button positive flex-size-1" onclick="increaseStat('skillname-to-be-replaced')")
@@ -268,7 +268,7 @@ html
                     p(class="points-for-skillname-to-be-replaced") 0
                   div(class="column-flex center button negative flex-size-1" onclick="decreaseStat('skillname-to-be-replaced')")
                     p -
-                  div(class="column-flex center button negative flex-size-1")
+                  div(class="column-flex center button negative flex-size-1" onclick="removeSkill('skillname-to-be-replaced')")
                     p Delete
 
               div(class="flexed-statblock")

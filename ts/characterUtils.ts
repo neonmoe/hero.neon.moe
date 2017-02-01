@@ -31,25 +31,41 @@ export default class CharacterUtils {
     Object.keys(vals).forEach(stat => {
       total += netdb.values[stat];
     });
+    Object.keys(netdb.values).forEach(stat => {
+      if (CharacterUtils.isSkill(stat)) {
+        total += netdb.getAsInt(stat + "-base") + netdb.getAsInt(stat);
+      }
+    });
     return total;
   }
 
-  static getExpForStat(stat: string) {
-    return CharacterUtils.characteristicValues[stat] ? CharacterUtils.characteristicValues[stat][1] : 1;
+  static isSkill(stat: string) {
+    return stat.indexOf("skill-") == 0 && !(
+          stat.indexOf("-char") + 5 == stat.length ||
+          stat.indexOf("-base") + 5 == stat.length ||
+          stat.indexOf("-cost") + 5 == stat.length);
+  }
+
+  static getExpForStat(netdb: any, stat: string) {
+    if (stat.indexOf("skill-") == 0) {
+      return netdb.getAsInt(stat + "-cost");
+    } else {
+      return CharacterUtils.characteristicValues[stat] ? CharacterUtils.characteristicValues[stat][1] : 1;
+    }
   }
 
   static increaseStat(netdb: any, stat: string) {
-    let exp = CharacterUtils.getExpForStat(stat);
-    if (CharacterUtils.getSpentExperience(netdb) + exp <= netdb.get("exp")) {
-      netdb.updateValue(stat, netdb.get(stat) + exp);
+    let exp = CharacterUtils.getExpForStat(netdb, stat);
+    if (CharacterUtils.getSpentExperience(netdb) + exp <= netdb.getAsInt("exp")) {
+      netdb.updateValue(stat, netdb.getAsInt(stat) + exp);
     }
   }
 
   static decreaseStat(netdb: any, stat: string) {
-    let exp = CharacterUtils.getExpForStat(stat);
+    let exp = CharacterUtils.getExpForStat(netdb, stat);
     if (CharacterUtils.getSpentExperience(netdb) - exp >= 0 &&
-        netdb.get(stat) - exp >= 0) {
-      netdb.updateValue(stat, netdb.get(stat) - exp);
+        netdb.getAsInt(stat) - exp >= 0) {
+      netdb.updateValue(stat, netdb.getAsInt(stat) - exp);
     }
   }
 
