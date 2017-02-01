@@ -34,6 +34,7 @@ export module Universe {
   /** Returns false when the character can't be created, ie. when it exists already or the world is full. (See Universe.isWorldFull() for more specifics.) */
   export function createCharacter(world: string, name: string, authkey: string): boolean {
     if (characterExists(world, name)) {
+      console.log(name+ " exists!")
       return false;
     } else if (isWorldFull(world)) {
       console.log("Didn't create character '" + name + "' because the world '" + world + "' is full!");
@@ -82,12 +83,13 @@ export module Universe {
       let world = req.params.world;
       let name = req.params.name;
       let worldmissing = !Universe.worldExists(world);
-      if (!Universe.createCharacter(world, name, token)) {
+      if (Universe.createCharacter(world, name, token)) {
         /**
         res.render("createcharacter", {
           name: name, world: world, popLimit: true,
           creation: false, worldmissing: worldmissing
         });*/
+        res.statusCode = 200;
         res.send("OK");
       } else {
         res.statusCode = 403;

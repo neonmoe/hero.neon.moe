@@ -28,3 +28,62 @@ function changeHandle(oldToken) {
     {label: "Cancel", color: "0", closesPopup: true, func: () => {}}
   ], oldToken);
 }
+
+function createNewCharacter() {
+  let request = new XMLHttpRequest();
+  request.open("GET", '/u/wl/');
+
+  request.onload = () => {
+
+
+    if (request.readyState === 4 && request.status == 200) {
+      let list = JSON.parse(request.response);
+      if (list.length == 0) {
+        createButtonPopup("No worlds to create character on", "", [{label: "Ok", color: "0", closesPopup: true, func: () => {}}])
+      } else {
+        createDropdownPopup("Select a world", "Select the world you want to create the character in.", [
+          {label: "Select", color: "+", closesPopup: true, func: (world) => {
+            let request = new XMLHttpRequest();
+            request.open("GET", '/u/cc/' + world);
+            request.onload = () => {
+              if (request.readyState === 4 && request.status == 200) {
+
+                if (JSON.parse(request.response)) { // If can create character
+                  createInputfieldPopup("Select a name", "What shall your character be called?", [
+                    {label: "Select", color: "+", closesPopup: true, func: (name) => {
+                      let request = new XMLHttpRequest();
+                      request.open("POST", `/u/nc/${world}/${name}`);
+                      request.onload = () => {
+                        if (request.readyState === 4) {
+                          if (request.status == 200) {
+                            window.location.replace(`/c/${world}/${name}`);
+                          } else {
+                            createButtonPopup("Oh no!",
+                            "Something went horribly wrong! Abort!", [
+                              {label: "Ok", color: "0", closesPopup: true, func: () => {}}])
+                          }
+                        }
+                      }
+                      request.send();
+                    }},
+                    {label: "Cancel", color: "0", closesPopup: true, func: () => {}}
+                  ])
+                } else {
+                  createButtonPopup("Uh oh!", "You can't create a character here! Maybe the world is full?", [{label: "Ok", color: "0", closesPopup: true, func: () => {}}]);
+                }
+
+
+              }
+            }
+            request.send();
+          }},
+          {label: "Cancel", color: "0", closesPopup: true, func: () => {}}
+        ], list);
+      }
+    }
+
+
+  }
+
+  request.send();
+}
