@@ -1,11 +1,9 @@
 node_modules
 *.~
 backups/*
-views/styles/main.css
-views/styles/popup.css
+views/styles/*.css
+views/styles/*.css.map
 views/styles/.sass-cache
-views/styles/main.css.map
-views/styles/popup.css.map
 .sass-cache
 js
 npm-debug.log
