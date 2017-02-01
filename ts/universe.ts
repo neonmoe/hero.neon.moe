@@ -137,7 +137,7 @@ export module Universe {
 
     } catch (e) {
       console.log("Loading universe savedata failed");
-      console.log(e);
+      console.error(e);
     }
   }
 

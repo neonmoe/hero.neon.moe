@@ -6,31 +6,28 @@ import * as FileSystem from "fs";
 
 export module FileReadWrite {
 
-  const backupPath = "backups/"
+  const savePath = "saves/"
+  const autosaves = savePath + "autosaves/"
 
   function writeFile(path: string, text: string): string {
-    path = backupPath + path;
     if (path.lastIndexOf(".json") != path.length - 5) { // Ensure the path ends in .json
       path += ".json";
     }
     let folderpart = path.split("/").slice(0, -1).join("/");
     try {
-      if (!FileSystem.existsSync(folderpart)) {
-        FileSystem.mkdirSync(folderpart);
-      }
+      ensurePath(folderpart);
       FileSystem.writeFileSync(path, text, {
         flag: "w+"
       });
       return path;
     } catch (e) {
       console.log("Something went wrong, try with a simpler path, or make sure the path exists.");
-      console.log(e);
+      console.error(e);
       return undefined;
     }
   }
 
   function readFile(path: string) {
-    path = backupPath + path;
     if (path.lastIndexOf(".json") != path.length - 5) { // Ensure the path ends in .json
       path += ".json";
     }
@@ -45,28 +42,30 @@ export module FileReadWrite {
       }
     } catch (e) {
       console.log("Something went wrong, try with a simpler path, or make sure the path exists.");
-      console.log(e);
+      console.error(e);
       return undefined;
     }
   }
 
-  export function backupCmd(args: Commander.Arguments) {
-
-    if (args.get("force")) {
-
-      let path = args.getAsString();
-      let savedTo = writeFile(Namer.convertNameToKey(path), JSON.stringify(Universe.save()));
-      if (savedTo) {
-        console.log("Universe saved to " + savedTo + ".");
+  function ensurePath(path: string) {
+    let pathParts = path.split("/");
+    let currPath = "";
+    pathParts.forEach(dir => {
+      currPath += dir + "/";
+      if (FileSystem.existsSync(currPath)) {
+        if (FileSystem.lstatSync(currPath).isDirectory()) {
+          return; // This part already exists, and is a directory, yay!
+        } else {
+          throw `Error: ${currPath} refers to a file.`
+        }
+      } else {
+        FileSystem.mkdirSync(currPath);
       }
-
-    } else {
-      console.log("Backup currently only possible in force mode.")
-    }
+    });
   }
 
-  export function backupLoadCmd(args: Commander.Arguments) {
-    let text = readFile(args.getAsString());
+  function loadUniverse(path: string) {
+    let text = readFile(path);
     if (text) {
       let data = {};
       try {
@@ -76,10 +75,97 @@ export module FileReadWrite {
       }
       if (Object.keys(data).length != 0) {
         Universe.load(data);
-        console.log("Universe loaded successfully.");
+        console.log(`Universe from ${path} loaded successfully.`);
       }
     } else {
-      console.log("Couldn't load " + args.getAsString() + ".");
+      console.error(`Could not load ${path}`);
+    }
+  }
+
+  function saveUniverseTo(path: string) {
+    return writeFile(Namer.convertNameToKey(path),
+      JSON.stringify(Universe.save()));
+  }
+
+  function getAutosaves(): string[] {
+    let saves = FileSystem.readdirSync(autosaves);
+    saves = saves.filter(f => f.indexOf("auto-") == 0);
+    return saves;
+  }
+
+  function birthdateSorter(filename: string, other: string): number {
+    return FileSystem.lstatSync(autosaves + filename).birthtime.getTime() -
+      FileSystem.lstatSync(autosaves + other).birthtime.getTime();
+  }
+
+  export function loadNewestAutosave() {
+
+    if (FileSystem.existsSync(autosaves)) {
+      let saves = getAutosaves().sort(birthdateSorter);
+      if (saves.length > 0) {
+        loadUniverse(autosaves + saves[saves.length - 1]);
+      } else {
+        console.log("No autosaves to load")
+      }
+    } else {
+      console.log("Autosaves folder does not exist yet.")
+    }
+  }
+
+  export function createNewAutosave() {
+    // Make sure the save path exists
+    ensurePath(autosaves);
+
+    // Get all current autosaves
+    let saves = getAutosaves().sort(birthdateSorter);
+
+    // Delete redundant saves, only leave the 9 newest saves
+    let oldestSaves = saves.slice(0, -9);
+    oldestSaves.forEach(savePath => {
+      FileSystem.unlinkSync(autosaves + savePath);
+    });
+
+    // Create new save
+    // Create the name for the save (Format: 'auto-042321-01022017')
+    let saveName;
+    do {
+      saveName = autosaves + "auto-" + Namer.generateRandomName();
+    } while (FileSystem.existsSync(saveName));
+
+    let savedTo = saveUniverseTo(saveName);
+    if (savedTo) {
+      console.log(`Automatically saved universe to "${savedTo}"`);
+    } else {
+      console.error("Automatic save of the universe failed.")
+    }
+  }
+
+  export function saveCmd(args: Commander.Arguments) {
+
+    if (args.get("autosave")) {
+      createNewAutosave();
+    } else {
+
+      if (args.get("force")) {
+
+        let path = savePath + args.getAsString();
+        let savedTo = saveUniverseTo(path);
+        if (savedTo) {
+          console.log(`Universe saved to ${savedTo}"`);
+        }
+
+      } else {
+        console.log("Backup currently only possible in force mode.")
+      }
+    }
+  }
+
+  export function loadCmd(args: Commander.Arguments) {
+    if (args.get("autosave")) {
+      loadNewestAutosave();
+    } else {
+      let path = savePath + args.getAsString();
+      loadUniverse(path);
     }
   }
 }

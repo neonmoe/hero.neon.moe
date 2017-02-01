@@ -4,7 +4,7 @@
   "description": "A sheet manager for HERO-like RPG systems.",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && sass views/styles/main.scss:views/styles/main.css && sass views/styles/popup.scss:views/styles/popup.css && node js/index.js",
+    "start": "tsc && sass views/styles/main.scss:views/styles/main.css && sass views/styles/popup.scss:views/styles/popup.css && sass views/styles/statblocks.scss:views/styles/statblocks.css && node js/index.js",
     "test": "node js/index.js"
   },
   "repository": {

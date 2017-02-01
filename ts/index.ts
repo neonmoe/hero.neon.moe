@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as http from "http";
 import * as path from "path";
 
 import {Authentication} from "./authentication";
@@ -8,6 +9,8 @@ import {Commander} from "./commander";
 import {FileReadWrite} from "./fileRW";
 
 const app = express();
+let server: http.Server; // Initialized later
+let autosaveIntervalId: NodeJS.Timer;
 
 app.set("view engine", "pug");
 app.disable("etag");
@@ -38,13 +41,26 @@ app.get("/*", (req, res) => {
   res.render("404", {});
 });
 
-Commander.registerCommand("save", FileReadWrite.backupCmd);
-Commander.registerCommand("load", FileReadWrite.backupLoadCmd);
+Commander.registerCommand("save", FileReadWrite.saveCmd);
+Commander.registerCommand("load", FileReadWrite.loadCmd);
+Commander.registerCommand("exit", (args: Commander.Arguments) => {
+  if (!args.get("nosave")) {
+    FileReadWrite.createNewAutosave();
+  }
+  server.close();
+  Commander.stopListening();
+  clearInterval(autosaveIntervalId);
+  console.log("Server closed.")
+});
 
-app.listen(8863, _ => {
+server = app.listen(8863, _ => {
   console.log("Firing up hero.neon.moe...");
   Universe.createWorld("Heaven");
   Universe.createCharacter("Heaven", "Jesus", "God");
-  console.log("Ready to rock and roll on port 8863!");
+  console.log("Ready to rock and roll on port 8863!\n");
   Commander.startListening();
+
+  // Load newest autosave and start autosaving every 60000 milliseconds
+  FileReadWrite.loadNewestAutosave();
+  autosaveIntervalId = setInterval(FileReadWrite.createNewAutosave, 60000);
 });

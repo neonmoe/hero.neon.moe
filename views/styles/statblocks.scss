@@ -1,0 +1,156 @@
+@import "./vars";
+
+.statblock {
+   background-color: $primary-color + #040404;
+   height: 3%;
+   min-height: 30px;
+
+   .nameplate {
+      height: 100%;
+      display: inline-flex;
+
+      div {
+         margin-left: 1em;
+      }
+
+      .name {
+         cursor: help;
+      }
+   }
+
+   .title {
+      height: 100%;
+   }
+
+   .valuefield {
+      @extend .button;
+      background-color: inherit;
+      display: inline-flex;
+   }
+
+   .button {
+      //height: 100%;
+      text-align: center;
+      -webkit-user-select: none; /* Chrome/Safari */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* IE10+ */
+      cursor: default;
+   }
+
+   .positive {
+      background-color: $primary-color + #070707;;
+      color: $positive;
+      font-weight: 600;
+      transition: 0.1s;
+
+   }
+   .positive.button:hover {
+      background-color: $positive + #333;
+      cursor: pointer;
+   }
+
+   .negative {
+      background-color: $primary-color + #070707;
+      color: $negative;
+      font-weight: 600;
+      transition: 0.1s;
+   }
+   .negative.button:hover {
+      background-color: $negative + #333;
+      cursor: pointer;
+   }
+
+   input {
+     resize: none;
+     width: 100%;
+     height: 100%;
+     margin: 0;
+     border: none;
+     padding: 0.2em;
+     padding-right: 0.5em;
+     padding-left: 0.5em;
+     font-family: Roboto, Helvetica, sans-serif;
+     background-color: $primary-color + #060606;
+     color: inherit;
+     transition: 0.15s;
+   }
+
+   input:hover {
+      background-color: $primary-color + #080808;
+   }
+
+   select {
+     @extend input;
+   }
+
+   .input-stuffer {
+     width: 100%;
+     height: 3%;
+     min-height: 30px;
+
+     textarea {
+       @extend input;
+       height: 3%;
+       min-height: 30px;
+       background-color: $primary-color + #040404;
+     }
+
+     textarea:hover {
+        background-color: $primary-color + #060606;
+     }
+   }
+
+}
+
+.flexed-statblock {
+   @extend .statblock;
+   display: flex;
+   flex-direction: row;
+
+   .title {
+      height: auto;
+   }
+}
+
+@mixin statblock-x {
+   @for $i from 2 through 5 {
+      .statblock-#{$i} {
+         @extend .statblock;
+
+         height: 3% * $i;
+         min-height: 30px * $i;
+
+         .input-stuffer {
+           height: 3% * $i;
+           min-height: 30px * $i;
+
+           textarea {
+             padding-top: 0.2em + 0.1em * $i;
+             padding-bottom: 0.2em + 0.1em * $i;
+             height: 3% * $i;
+             min-height: 30px * $i;
+           }
+         }
+      }
+   }
+}
+@include statblock-x;
+
+@for $i from 1 through 20 {
+   .statblock:nth-child(#{$i * 2 - 1}):not(.title) {
+      background-color: $primary-color + #070707 !important;
+
+      .positive, .negative {
+         background-color: $primary-color + #0a0a0a !important;
+      }
+      .positive.button:hover {
+         background-color: $positive + #363636 !important;
+         cursor: pointer;
+      }
+
+      .negative.button:hover {
+         background-color: $negative + #363636 !important;
+         cursor: pointer;
+      }
+   }
+}
