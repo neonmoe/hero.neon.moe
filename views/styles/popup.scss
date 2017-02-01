@@ -1,0 +1,57 @@
+$primary-color: #2f2f36;
+$text-color: rgb(204, 205, 219);
+
+.curtain {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: none;
+
+  .popup-anchor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    .popup {
+      max-width: 500px;
+      text-align: center;
+      padding: 2em;
+      background-color: $primary-color;
+
+      .popup-textinput {
+        background-color: $primary-color + #111;
+        color: $text-color;
+        border: 0;
+        padding: 0.7em;
+        display: block;
+        text-align: center;
+        width: 100%;
+        transition: 0.2s;
+      }
+
+      .popup-dropdown {
+        background-color: $primary-color + #111;
+        color: $text-color;
+        border: 0;
+        display: block;
+        width: 100%;
+        padding: 0.7em;
+        text-align: center;
+        transition: 0.2s;
+      }
+
+
+      .popup-textinput:hover, .popup-dropdown:hover {
+        background-color: $primary-color + #222;
+      }
+
+      .popup-textinput:focus, .popup-dropdown:hover {
+        background-color: $primary-color + #1a1a1a;
+      }
+    }
+  }
+}

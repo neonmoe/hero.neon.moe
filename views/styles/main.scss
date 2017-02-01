@@ -5,6 +5,7 @@
 }
 
 $primary-color: #2f2f36;
+$text-color: rgb(204, 205, 219);
 $positive: rgb(83, 144, 76);
 $negative: rgb(133, 60, 60);
 
@@ -15,7 +16,7 @@ html, body {
    margin: 0;
    padding: 0;
    background-color: $primary-color - #0e0e0e;
-   color: rgb(204, 205, 219);
+   color: $text-color;
 }
 
 .textcontent {
@@ -395,4 +396,52 @@ html, body {
 }
 ::-moz-selection {
   background: $primary-color + #333; /* Gecko Browsers */
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background-color: $primary-color + #111;
+  border: 0;
+  padding: 0.7em;
+  margin: 0.5em;
+  transition: 0.2s;
+  color: $text-color;
+}
+
+button:hover {
+  background-color: $primary-color + #222;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: $primary-color + #444;
+}
+
+button.positive {
+  color: $positive;
+}
+button.positive:hover {
+  background-color: $positive + #222;
+  color: $text-color + #222;
+  cursor: pointer;
+}
+
+button.positive:active {
+  background-color: $positive + #444;
+  color: $text-color + #444;
+}
+
+button.negative {
+  color: $negative;
+}
+button.negative:hover {
+  background-color: $negative + #222;
+  color: $text-color + #222;
+  cursor: pointer;
+}
+
+button.negative:active {
+  background-color: $negative + #444;
+  color: $text-color + #444;
 }
