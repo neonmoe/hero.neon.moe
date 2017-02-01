@@ -86,6 +86,7 @@ function updateFrontendForTextStats() {
     elem.value = netdb.get("textstat-" + stat).replace(/\\n/g, "\n");
     elem.maxLength = CharacterUtils.getMaxTextLength(stat);
   });
+  document.querySelector("#charactername").innerHTML = document.querySelector("#textstat-charactername").value;
 }
 
 function updateClasses(name, value) {
