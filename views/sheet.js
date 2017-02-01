@@ -36,7 +36,7 @@ function decreaseStat(stat) {
 function setTextStat(stat) {
   var req = new XMLHttpRequest();
   req.open("GET", "http://" + window.location.host + "/c/a/" + worldName + "/" + characterName + "/update-text-stat/" + stat);
-  req.setRequestHeader("Stat-Value", document.querySelector("#textstat-" + stat).value);
+  req.setRequestHeader("Stat-Value", document.querySelector("#textstat-" + stat).value.replace(/\n/g, "\\n"));
   req.send();
 }
 
@@ -80,10 +80,9 @@ function updateFrontendForStatus() {
 
 function updateFrontendForTextStats() {
   CharacterUtils.textStats.forEach(stat => {
-    document.querySelectorAll("." + "textstat-" + stat).forEach(elem => {
-      elem.value = netdb.get("textstat-" + stat);
-      elem.maxLength = CharacterUtils.getMaxTextLength(stat);
-    });
+    let elem = document.querySelector("#textstat-" + stat);
+    elem.value = netdb.get("textstat-" + stat).replace(/\\n/g, "\n");
+    elem.maxLength = CharacterUtils.getMaxTextLength(stat);
   });
 }
 
