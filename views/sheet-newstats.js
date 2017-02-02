@@ -8,9 +8,8 @@ function createSkill() {
   let base = parseInt(document.querySelector("#skillbase").value);
   let cost = parseInt(document.querySelector("#skillcost").value);
   document.querySelector("#skillname").value = "";
-  document.querySelector("#skillbase").value = 0;
-  document.querySelector("#skillcost").value = 0;
-  console.log(skillName + ", " + char + ", " + base + ", " + cost);
+  document.querySelector("#skillbase").value = 1;
+  document.querySelector("#skillcost").value = 1;
   // Visible HTML stuff
   loadSkill(skillName);
   // Invisible backend stuff
@@ -28,4 +27,19 @@ function loadSkill(skillName) {
   skillsParentElement.innerHTML += templateSkillHTML
     .replace(/visible-skillname-to-be-replaced/g, Namer.convertKeyToName(skillName.substring(6)))
     .replace(/skillname-to-be-replaced/g, skillName);
+}
+
+function removeSkill(skillName) {
+  document.querySelector("#" + skillName).remove();
+  var req = new XMLHttpRequest();
+  req.open("GET", "http://" + window.location.host + "/c/a/" + worldName + "/" + characterName + "/remove-skill/" + skillName);
+  req.send();
+  // Only removing the vlaues from the netdb after they're gone from the server so they don't come haunt us next sync.
+  req.addEventListener("load", _ => {
+    netdb.removeValue(skillName);
+    netdb.removeValue(skillName + "-char");
+    netdb.removeValue(skillName + "-base");
+    netdb.removeValue(skillName + "-cost");
+    updateFrontend(["exp"]);
+  });
 }

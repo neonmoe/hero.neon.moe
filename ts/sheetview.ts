@@ -57,6 +57,15 @@ export module Sheetview {
             netdb.updateValue(val + "-cost", skillProps[2]);
           }
           break;
+        case "remove-skill":
+          if (Authentication.permission.reqHas(character.editPL, req)) {
+            netdb.removeValue(val);
+            netdb.removeValue(val + "-char");
+            netdb.removeValue(val + "-base");
+            netdb.removeValue(val + "-cost");
+            res.sendStatus(200);
+          }
+          break;
         case "sync":
           if (Authentication.permission.reqHas(character.viewPL, req)) {
             let value = netdb.getNewValues(parseInt(req.params.value));

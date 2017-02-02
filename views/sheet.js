@@ -57,7 +57,7 @@ function updateFrontend(changedStats) {
     updateFrontendForTextStats();
   }
   if (statsUpdated || skillsUpdated) {
-    updateFrontendForSkills(changedStats.filter(c => CharacterUtils.isSkill(c)));
+    updateFrontendForSkills(Object.keys(netdb.values).filter(c => CharacterUtils.isSkill(c)));
   }
 }
 
