@@ -256,20 +256,23 @@ html
                 div(class="column-flex center flex-size-1")
                   p(class="icon" title="Delete") ❌
 
-              div(class="flexed-statblock")
-                div(class="nameplate flex-size-4")
-                  div(class="column-flex center")
-                    p Example skill
-                div(class="column-flex center valuefield flex-size-1")
-                  p 0
-                div(class="column-flex center button positive flex-size-1")
-                  p +
-                div(class="column-flex center valuefield flex-size-1")
-                  p 0
-                div(class="column-flex center button negative flex-size-1")
-                  p -
-                div(class="column-flex center button negative flex-size-1")
-                  p Delete
+              div(id="skilllist")
+                <!-- Example skill statblock -->
+                div(class="flexed-statblock" id="skillname-to-be-replaced")
+                  div(class="nameplate flex-size-4")
+                    div(class="column-flex center")
+                      p visible-skillname-to-be-replaced
+                  div(class="column-flex center valuefield flex-size-1")
+                    p(class="roll-for-skillname-to-be-replaced") 0
+                  div(class="column-flex center button positive flex-size-1" onclick="increaseStat('skillname-to-be-replaced')")
+                    p +
+                  div(class="column-flex center valuefield flex-size-1")
+                    p(class="points-for-skillname-to-be-replaced") 0
+                  div(class="column-flex center button negative flex-size-1" onclick="decreaseStat('skillname-to-be-replaced')")
+                    p -
+                  div(class="column-flex center button negative flex-size-1" onclick="removeSkill('skillname-to-be-replaced')")
+                    p Delete
+                <!-- End of example skill statblock -->
 
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-8")
@@ -281,11 +284,27 @@ html
                 div(class="nameplate flex-size-1")
                   div(class="column-flex center")
                     p Name:
-                div(class="column-flex center valuefield flex-size-4")
-                  input(type="text")
-                div(class="column-flex center valuefield flex-size-3")
-                  p
-                div(class="column-flex center button positive flex-size-1")
+                div(class="column-flex center valuefield flex-size-2")
+                  input(type="text" id="skillname" value="Example Skill Name")
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Base exp:
+                div(class="column-flex center valuefield flex-size-1")
+                  input(type="number" id="skillbase" value=1 min=0)
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Exp per +1:
+                div(class="column-flex center valuefield flex-size-1")
+                  input(type="number" id="skillcost" value=1 min=1)
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center")
+                    p Characteristic:
+                div(class="column-flex center valuefield flex-size-1")
+                  select(id="skillchar")
+                    option(selected=true) Str
+                    option Int
+                    option Dex
+                div(class="column-flex center button positive flex-size-1" onclick=("createSkill()"))
                   p Create
 
         div(class="tabcontent" data-active="false" data-tab="powers")
@@ -320,7 +339,7 @@ html
                   option Dexterity
                   option Intelligence
               div(class="column-flex center valuefield flex-size-1")
-                input(type="number")
+                input(type="number" value=0)
               div(class="column-flex center button positive flex-size-1")
                 p Add
 
@@ -371,7 +390,9 @@ html
 
     <script>var exports = {};
       include sheet-tabs.js
+      include ../js/namer.js
       include ../js/netdb.js
       include ../js/characterUtils.js
       include sheet.js
+      include sheet-newstats.js
     </script>

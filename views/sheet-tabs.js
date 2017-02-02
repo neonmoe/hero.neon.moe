@@ -8,8 +8,6 @@ function setCurrentTab() {
   let tab = window.location.hash.substr(1);
   if (document.querySelector(`.tabcontent[data-tab="${tab}"]`) != null) {
     switchTab(tab);
-  } else {
-    console.log(`tab ${tab} does not exist!`)
   }
 }
 

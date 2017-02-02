@@ -17,9 +17,14 @@ export default class Namer {
       'badger', 'snake', 'orange', 'apple', 'dog', 'cat', 'chimpanzee']
   };
 
-  /** Just a convenience function, an "encoder" for the world and character names. */
+  /** Just a convenience function, an "encoder" for the world and character names. Changes everything except A-Z, a-z, 0-9 and _ into -. */
   static convertNameToKey(name: string) {
-    return name.toLowerCase().replace(" ", "-");
+    return name.toLowerCase().replace(/[^A-Za-z0-9_/]/g, "-");
+  }
+
+  /** For prettifying keys. */
+  static convertKeyToName(key: string) {
+    return key.split("-").map(c => c.substring(0, 1).toUpperCase() + c.substring(1)).join(" ");
   }
 
   /** Generate a string of hex characters at specified length */

@@ -13,6 +13,15 @@ export default class NetDB {
     return this.values[key];
   }
 
+  getAsInt(key: string) {
+    return parseInt(this.values[key]);
+  }
+
+  removeValue(key: string) {
+    delete this.values[key];
+    delete this.syncTimes[key];
+  }
+
   updateValue(key: string, value: any, syncTime: number = NetDB.getTime()) {
     if (Object.keys(this.values).indexOf(key) == -1 || this.syncTimes[key] < syncTime) {
       this.syncTimes[key] = syncTime;

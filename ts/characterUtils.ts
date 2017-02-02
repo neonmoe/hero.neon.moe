@@ -1,11 +1,24 @@
 export default class CharacterUtils {
-  static getRoll(points: number): number {
-    return 9 + Math.floor(points / 5);
+  static getRoll(netdb: any, stat: string): number {
+    if (Object.keys(CharacterUtils.characteristicValues).indexOf(stat) != -1) {
+      let points = netdb.getAsInt(stat);
+      return 9 + Math.floor(points / 5);
+    } else if (stat.indexOf("skill-") == 0) {
+      let points = netdb.getAsInt(netdb.get(stat + "-char"));
+      let bonus = netdb.getAsInt(stat) / netdb.getAsInt(stat + "-cost");
+      return 9 + Math.floor(points / 5) + bonus;
+    } else {
+      return -1;
+    }
   }
 
   static getValue(stat: string, points: number): number {
-    let vals = CharacterUtils.characteristicValues[stat];
-    return Math.round(vals[0] + points / vals[1] * vals[2]);
+    if (CharacterUtils.characteristicValues[stat]) {
+      let vals = CharacterUtils.characteristicValues[stat];
+      return Math.round(vals[0] + points / vals[1] * vals[2]);
+    } else {
+      return Math.round(points);
+    }
   }
 
   static getHTHDmg(strPoints: number): number {
@@ -27,21 +40,41 @@ export default class CharacterUtils {
     Object.keys(vals).forEach(stat => {
       total += netdb.values[stat];
     });
+    Object.keys(netdb.values).forEach(stat => {
+      if (CharacterUtils.isSkill(stat)) {
+        total += netdb.getAsInt(stat + "-base") + netdb.getAsInt(stat);
+      }
+    });
     return total;
   }
 
+  static isSkill(stat: string) {
+    return stat.indexOf("skill-") == 0 && !(
+          stat.indexOf("-char") + 5 == stat.length ||
+          stat.indexOf("-base") + 5 == stat.length ||
+          stat.indexOf("-cost") + 5 == stat.length);
+  }
+
+  static getExpForStat(netdb: any, stat: string) {
+    if (stat.indexOf("skill-") == 0) {
+      return netdb.getAsInt(stat + "-cost");
+    } else {
+      return CharacterUtils.characteristicValues[stat] ? CharacterUtils.characteristicValues[stat][1] : 1;
+    }
+  }
+
   static increaseStat(netdb: any, stat: string) {
-    const exp = CharacterUtils.characteristicValues[stat][1];
-    if (CharacterUtils.getSpentExperience(netdb) + exp <= netdb.get("exp")) {
-      netdb.updateValue(stat, netdb.get(stat) + exp);
+    let exp = CharacterUtils.getExpForStat(netdb, stat);
+    if (CharacterUtils.getSpentExperience(netdb) + exp <= netdb.getAsInt("exp")) {
+      netdb.updateValue(stat, netdb.getAsInt(stat) + exp);
     }
   }
 
   static decreaseStat(netdb: any, stat: string) {
-    const exp = CharacterUtils.characteristicValues[stat][1];
+    let exp = CharacterUtils.getExpForStat(netdb, stat);
     if (CharacterUtils.getSpentExperience(netdb) - exp >= 0 &&
-        netdb.get(stat) - exp >= 0) {
-      netdb.updateValue(stat, netdb.get(stat) - exp);
+        netdb.getAsInt(stat) - exp >= 0) {
+      netdb.updateValue(stat, netdb.getAsInt(stat) - exp);
     }
   }
 

@@ -30,22 +30,40 @@ export module Sheetview {
     if (Universe.characterExists(world, name)) {
       let character = Universe.getCharacter(world, name);
       let netdb = character.database;
+      let val = req.params.value;
+      let val1 = req.params.value1;
       switch (req.params.action) {
         case "update-stat":
           if (Authentication.permission.reqHas(character.editPL, req)) {
-            let args = req.params.value.split("-");
-            let stat = args[1];
-            if (args[0] == "up") {
-              CharacterUtils.increaseStat(netdb, stat);
+            if (val == "up") {
+              CharacterUtils.increaseStat(netdb, val1);
             } else {
-              CharacterUtils.decreaseStat(netdb, stat);
+              CharacterUtils.decreaseStat(netdb, val1);
             }
             res.send("OK");
           }
           break;
         case "update-text-stat":
           if (Authentication.permission.reqHas(character.editPL, req)) {
-            netdb.updateValue("textstat-" + req.params.value, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(req.params.value)));
+            netdb.updateValue("textstat-" + val, req.get("Stat-Value").substring(0, CharacterUtils.getMaxTextLength(val)));
+          }
+          break;
+        case "init-skill":
+          if (Authentication.permission.reqHas(character.editPL, req)) {
+            let skillProps = val1.split("-");
+            netdb.updateValue(val, 0);
+            netdb.updateValue(val + "-char", skillProps[0]);
+            netdb.updateValue(val + "-base", skillProps[1]);
+            netdb.updateValue(val + "-cost", skillProps[2]);
+          }
+          break;
+        case "remove-skill":
+          if (Authentication.permission.reqHas(character.editPL, req)) {
+            netdb.removeValue(val);
+            netdb.removeValue(val + "-char");
+            netdb.removeValue(val + "-base");
+            netdb.removeValue(val + "-cost");
+            res.sendStatus(200);
           }
           break;
         case "sync":
