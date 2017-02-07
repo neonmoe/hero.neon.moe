@@ -1,4 +1,6 @@
 
+import {Omega} from "./omegaOutput"
+
 export module OmegaParser {
 
   const rollRegex = /^([1-9]+[0-9]*)d([1-9]+[0-9]*)$/g;
@@ -19,24 +21,19 @@ export module OmegaParser {
   }
 
   let functions = {
-    "for": function(params: any[], index: number) {
-      let begin = params[0] || 0;
-      let end = params[1] || 0;
-      return [index < (end - begin), ""];
-    },
-    "print": function(params: any[]) {
+    "print": function(params: any[], index: number, scopes: Scope[], output: Omega.Output) {
       let strings: string[] = [];
       params.forEach(param => {
         strings.push(param.toString());
       });
-      console.log(strings.join(" "));
+      output.stack.push(new Omega.Log(strings.join(" ")));
       return [false, ""]
     },
-    "let": function(params: any[], index: number, scopes: Scope[]) {
+    "let": function(params: any[], index: number, scopes: Scope[], output: Omega.Output) {
       let varName = params[0];
       let value = params[1];
       if (varName === undefined || value === undefined) { return [false, ""]; }
-      createNewVariable(scopes, varName, value);
+      createNewVariable(scopes, varName, value, output);
       return [false, value]
     },
     "set": function(params: any[], index: number, scopes: Scope[]) {
@@ -60,17 +57,7 @@ export module OmegaParser {
       }
       return [false, ""]
     },
-    "plus": function(params: any[]) {
-      let first = params[0] || 0;
-      let second = params[1] || 0;
-      return [false, first + second];
-    },
-    "minus": function(params: any[]) {
-      let first = params[0] || 0;
-      let second = params[1] || 0;
-      return [false, first - second];
-    },
-    "roll": function(params: any[], index: number, scopes: Scope[]) {
+    "roll": function(params: any[], index: number, scopes: Scope[], output: Omega.Output) {
       let rollParam = params[0] || "";
       let formatted = replaceFormatsWithVariables(rollParam, getAllCurrentVariables(scopes));
 
@@ -78,7 +65,7 @@ export module OmegaParser {
       paren = parenthesizeParenthesis(paren);
 
       if (!paren) {
-        console.log("Macro parsing failed. Parenthesis(es) left open!");
+        output.stack.push(new Omega.Exception("Macro parsing failed. Parenthesis(es) left open!", []))
         return [false, null];
       }
 
@@ -102,12 +89,69 @@ export module OmegaParser {
       });
       paren.content = tempContent;
 
-      return [false, JSON.stringify([calculcateParenthesis(paren, functions), tempContent.join(" "), rollParam], null, 2)];
-    }
+      return [false, {
+        result: calculcateParenthesis(paren, functions),
+        middleStep: tempContent.join(" "),
+        initial: rollParam}];
+    },
+    "plus": function(params: any[]) {
+      let first = params[0] || 0;
+      let second = params[1] || 0;
+      return [false, first + second];
+    },
+    "minus": function(params: any[]) {
+      let first = params[0] || 0;
+      let second = params[1] || 0;
+      return [false, first - second];
+    },
+    "for": function(params: any[], index: number) {
+      let begin = params[0] || 0;
+      let end = params[1] || 0;
+      return [index < (end - begin), ""];
+    },
+    "while": function(params: any[], index: number) {
+      let condition = params[0] || false;
+      return [condition, ""];
+    },
+    "if": function(params: any[], index: number) {
+      let first = params[0] || null;
+      return [index == 0 && first, ""];
+    },
+    "true": function() {
+      return [false, true];
+    },
+    "false": function() {
+      return [false, false];
+    },
+    "equals": function(params: any[]) {
+      let first = params[0] || null;
+      let second = params[1] || null;
+      return [false, first == second]
+    },
+    "more": function(params: any[]) {
+      let first = params[0] || null;
+      let second = params[1] || null;
+      return [false, first > second]
+    },
+    "moreorequal": function(params: any[]) {
+      let first = params[0] || null;
+      let second = params[1] || null;
+      return [false, first >= second]
+    },
+    "and": function(params: any[]) {
+      let first = params[0] || null;
+      let second = params[1] || null;
+      return [false, first && second]
+    },
+    "or": function(params: any[]) {
+      let first = params[0] || null;
+      let second = params[1] || null;
+      return [false, first || second]
+    },
   };
 
   export function executeSafe(text: string,
-    globalFunctions: {[name: string]: (params: string[]) => any} = {},
+    globalFunctions: {[name: string]: (params: string[], output: Omega.Output) => any} = {},
     globalVariables: {[name: string]: any} = {}) {
 
     try {
@@ -115,24 +159,32 @@ export module OmegaParser {
     } catch (e) {
       console.error("Fatal error occoured executing code.");
       console.error(e);
-      return null;
+      return { stack: [new Omega.Exception("Fatal error occoured executing code.", [])] };
     }
   }
 
   export function execute(text: string,
-    globalFunctions: {[name: string]: (params: string[]) => any} = {},
-    globalVariables: {[name: string]: any} = {}) {
+    globalFunctions: {[name: string]: (params: string[], output: Omega.Output) => any} = {},
+    globalVariables: {[name: string]: any} = {}): Omega.Output {
 
     // Initialize global Scope
     let scopeStack = [new Scope(0, 0, () => {}, [])];
 
     // Initialize global functions and variables
     Object.keys(globalFunctions).forEach(func => {
-      functions[func] = globalFunctions[func];
+      functions[func] = (params: any[], index: number, scopes: Scope[], output: Omega.Output) => {
+        globalFunctions[func](params, output);
+      }
     });
     Object.keys(globalVariables).forEach(v => {
       scopeStack[0].variables[v] = globalVariables[v];
     });
+
+    // Initialize Output stack
+
+    let output: Omega.Output = {
+      stack: []
+    };
 
     let currentString: string = undefined;
     let currentNumber: string = undefined;
@@ -158,15 +210,15 @@ export module OmegaParser {
       if (currentString === undefined && lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().readyToRun) {
         if (c != "{") {
           if (isAllowedLetter(c) || isAllowedNumber(c)) {
-            console.error(`Unexpected character after function call (${i})`)
-            return false;
+            output.stack.push(new Omega.Exception("Unexpected character after function call.", calculateLocation(i, text)));
+            return output;
           }
-          let returned = lastScope(scopeStack).runLastFunc(0, scopeStack);
+          let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().paramsStarted && !lastScope(scopeStack).lastFunc().expectingComma) {
             lastScope(scopeStack).lastFunc().addParam(returned[1]);
           }
         } else {
-          let returned = lastScope(scopeStack).runLastFunc(0, scopeStack);
+          let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (returned[0]) {
             scopeStack.push(new Scope(i + 1, 0, returned[2], returned[3]));
           } else {
@@ -177,11 +229,11 @@ export module OmegaParser {
 
       if (currentString === undefined && c == "}" && !currentString && !justLeftScope) {
         if (lastScope(scopeStack).funcStack.length != 0) {
-          console.error(`Cannot exit out of scope in middle of a function call. (${i})`);
-          return false;
+          output.stack.push(new Omega.Exception("Cannot exit out of scope in middle of a function call.", calculateLocation(i, text)));
+          return output;
         } else if (scopeStack.length == 1) {
-          console.error(`Cannot exit topmost scope. (${i})`);
-          return false;
+          output.stack.push(new Omega.Exception("Cannot exit topmost scope.", calculateLocation(i, text)));
+          return output;
         }
 
         let oldScope = scopeStack.pop();
@@ -200,8 +252,8 @@ export module OmegaParser {
           continue;
         } else {
           if (expectingParams(scopeStack) || (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().paramsStarted && lastScope(scopeStack).lastFunc().expectingComma)) {
-            console.error(`Expecing parenthesis or a comma to separate parameters (${i})`);
-            return false;
+            output.stack.push(new Omega.Exception("Expecing parenthesis or a comma to separate parameters.", calculateLocation(i, text)));
+            return output;
           }
           currentNumber = c;
         }
@@ -218,8 +270,8 @@ export module OmegaParser {
           continue;
         }
         if (expectingParams(scopeStack)) {
-          console.error(`Expecing parenthesis. (${i})`);
-          return false;
+          output.stack.push(new Omega.Exception("Expecing parenthesis.", calculateLocation(i, text)));
+          return output;
         }
 
         continue; // Ignore spaces and newlines
@@ -234,8 +286,8 @@ export module OmegaParser {
           currentString = undefined;
         } else {
           if (expectingParams(scopeStack) || (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().paramsStarted && lastScope(scopeStack).lastFunc().expectingComma)) {
-            console.error(`Expecing parenthesis or a comma to separate parameters (${i})`);
-            return false;
+            output.stack.push(new Omega.Exception("Expecing parenthesis or a comma to separate parameters.", calculateLocation(i, text)));
+            return output;
           }
           // If parameters started, check for commas, otherwise ¯\_(ツ)_/¯
           currentString = "";
@@ -261,8 +313,8 @@ export module OmegaParser {
           lastScope(scopeStack).lastFunc().applyComma();
           continue;
         } else {
-          console.error(`Unexpected comma (${i})`);
-          return false;
+          output.stack.push(new Omega.Exception("Unexpected comma.", calculateLocation(i, text)));
+          return output;
         }
       }
 
@@ -270,21 +322,24 @@ export module OmegaParser {
         if (expectingParams(scopeStack)) {
           lastScope(scopeStack).lastFunc().paramsStarted = true;
         } else {
-          console.error(`Were not expecting parenthesis (${i})`)
+          output.stack.push(new Omega.Exception("Were not expecting parenthesis.", calculateLocation(i, text)));
+          return output;
         }
       }
 
       if (currentString === undefined && c == ")") {
         if (lastScope(scopeStack).funcStack.length == 0 || (lastScope(scopeStack).lastFunc().paramsStarted && (!lastScope(scopeStack).lastFunc().expectingComma && lastScope(scopeStack).lastFunc().currParams.length > 0))) {
-          console.error(`Function not started, opening parenthesis not started or not expecting a closing parenthesis (${i})`);
-          return false;
+          output.stack.push(new Omega.Exception("Function not started, opening parenthesis not started or not expecting a closing parenthesis.", calculateLocation(i, text)));
+          return output;
         }
         lastScope(scopeStack).lastFunc().readyToRun = true;
         if (i == text.length - 1) {
-          lastScope(scopeStack).runLastFunc(0, scopeStack);
+          lastScope(scopeStack).runLastFunc(0, scopeStack, output);
         }
       }
     }
+
+    return output;
   }
 
   function isAllowedLetter(l: string): boolean {
@@ -338,9 +393,9 @@ export module OmegaParser {
     })
   }
 
-  function createNewVariable(stack: Scope[], name: string, initialValue: any) {
+  function createNewVariable(stack: Scope[], name: string, initialValue: any, output: Omega.Output) {
     if (name in lastScope(stack).variables) {
-      console.error(`Variable ${name} already exists.`);
+      output.stack.push(new Omega.Exception(`Variable ${name} already exists.`, []));
       return;
     }
     lastScope(stack).variables[name] = initialValue;
@@ -353,6 +408,21 @@ export module OmegaParser {
       } while (text.indexOf("{" + v + "}") >= 0)
     });
     return text;
+  }
+
+  function calculateLocation(charIdx: number, completeText: string): number[] {
+    let rows = completeText.split("\n");
+    let totalChars = 0;
+    for (let i = 0; i < rows.length; i++) {
+      let r = rows[i];
+      if (charIdx >= (r.length + totalChars)) {
+        totalChars += r.length + 1;
+        continue;
+      } else {
+        return [charIdx - totalChars, i + 1];
+      }
+    }
+    return [0, 0];
   }
 
   function calculcateParenthesis(paren: Parenthesis, functions: {[key: string]: (input: number) => number}): number {
@@ -558,8 +628,8 @@ export module OmegaParser {
       return this.funcStack[this.funcStack.length - 1];
     }
 
-    runLastFunc(scopeCount: number, scopes: Scope[]) {
-      return this.funcStack.pop().runFunction(scopeCount, scopes);
+    runLastFunc(scopeCount: number, scopes: Scope[], output: Omega.Output) {
+      return this.funcStack.pop().runFunction(scopeCount, scopes, output);
     }
   }
 
@@ -582,12 +652,12 @@ export module OmegaParser {
       this.expectingParam = true;
     }
 
-    runFunction(count: number, scopes: Scope[]) {
+    runFunction(count: number, scopes: Scope[], output: Omega.Output) {
       if (!(this.currFunctionName in functions)) {
-        console.error(`Function not found: ${this.currFunctionName}`);
+        output.stack.push(new Omega.Exception(`Function not found: ${this.currFunctionName}`, []));
         return [false, ""];
       }
-      let returns = functions[this.currFunctionName](this.currParams, count, scopes);
+      let returns = functions[this.currFunctionName](this.currParams, count, scopes, output);
       returns.push(functions[this.currFunctionName]);
       returns.push(this.currParams);
       return returns;
@@ -596,11 +666,34 @@ export module OmegaParser {
 
 }
 
-OmegaParser.executeSafe(`
-  print(roll("{strength} * 5 + floor(7 / 2)"))
+let output = OmegaParser.executeSafe(`
+
+  let("counter", 0)
+
+  for(0, minus(10, get("counter"))){
+    set("counter", plus(get("counter"), 1))
+    print("hello!", get("counter"))
+  }
   `, {}, {
     "strength": 3
   });
+
+output.stack.forEach(out => {
+  if (out instanceof Omega.Log) {
+    console.log(`LOG: ${out.message}`);
+  }
+  if (out instanceof Omega.ChatOutput) {
+    try {
+      console.log(`CHAT_MESSAGE: ${JSON.stringify(out.message)}\n\tCHANNEL: ${out.channel}\n\tEXTRA_DATA: ${JSON.stringify(out.data)}`);
+    } catch (e) {
+      console.log("Could not JSON.stringify CHAT_MESSAGE or EXTRA_DATA. Raw;")
+      console.log(`CHAT_MESSAGE: ${out.message}\n\tCHANNEL: ${out.channel}\n\tEXTRA_DATA: ${out.data}`);
+    }
+  }
+  if (out instanceof Omega.Exception) {
+    console.error(`EXCEPTION OCCURED: ${out.message} (at ${out.location.join(":")})`);
+  }
+});
 /*
 
 set("joku", 3)
