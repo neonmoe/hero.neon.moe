@@ -168,7 +168,7 @@ export module OmegaParser {
     globalVariables: {[name: string]: any} = {}): Omega.Output {
 
     // Initialize global Scope
-    let scopeStack = [new Scope(0, 0, () => {}, [])];
+    let scopeStack = [new Scope(0, 0, () => {}, [], "", [])];
 
     // Initialize global functions and variables
     Object.keys(globalFunctions).forEach(func => {
@@ -215,12 +215,12 @@ export module OmegaParser {
           }
           let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().paramsStarted && !lastScope(scopeStack).lastFunc().expectingComma) {
-            lastScope(scopeStack).lastFunc().addParam(returned[1]);
+            lastScope(scopeStack).lastFunc().addParam(returned[1], returned[4]);
           }
         } else {
           let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (returned[0]) {
-            scopeStack.push(new Scope(i + 1, 0, returned[2], returned[3]));
+            scopeStack.push(new Scope(i + 1, 0, returned[2], returned[3], returned[4]["currFunctionName"], returned[4]["rawParams"]));
           } else {
             lastScope(scopeStack).ignoreUntilScopeEnds = 1;
           }
@@ -237,10 +237,11 @@ export module OmegaParser {
         }
 
         let oldScope = scopeStack.pop();
-        let returned = oldScope.scopeFunc(oldScope.scopeFuncParams, oldScope.scopeCounter + 1);
+        //let returned = oldScope.scopeFunc(oldScope.scopeFuncParams, oldScope.scopeCounter + 1);
+        let returned = oldScope.runRaw(oldScope.scopeFuncName, oldScope.rawScopeFuncParams, oldScope.scopeCounter + 1, scopeStack, output)
         if (returned[0]) {
           i = oldScope.start;
-          scopeStack.push(new Scope(i, oldScope.scopeCounter + 1, oldScope.scopeFunc, oldScope.scopeFuncParams));
+          scopeStack.push(new Scope(i, oldScope.scopeCounter + 1, oldScope.scopeFunc, oldScope.scopeFuncParams, oldScope.scopeFuncName, oldScope.rawScopeFuncParams));
         } else {
           continue;
         }
@@ -259,7 +260,7 @@ export module OmegaParser {
         }
       } else if (currentNumber && (c == " " || c == "\n" || c == ")" || c == ",")) {
         if (lastScope(scopeStack).funcStack.length == 0 || (lastScope(scopeStack).lastFunc().paramsStarted && !lastScope(scopeStack).lastFunc().expectingComma)) {
-          lastScope(scopeStack).lastFunc().addParam(parseFloat(currentNumber));
+          lastScope(scopeStack).lastFunc().addParam(parseFloat(currentNumber), parseFloat(currentNumber));
         }
         currentNumber = undefined;
       }
@@ -281,7 +282,7 @@ export module OmegaParser {
         if (currentString) {
           // Spew out string for parameters, if parametets started
           if (lastScope(scopeStack).funcStack.length != 0 && (lastScope(scopeStack).lastFunc().paramsStarted && !lastScope(scopeStack).lastFunc().expectingComma)) {
-            lastScope(scopeStack).lastFunc().addParam(currentString)
+            lastScope(scopeStack).lastFunc().addParam(currentString, currentString)
           }
           currentString = undefined;
         } else {
@@ -614,14 +615,18 @@ export module OmegaParser {
 
     scopeFunc: Function = null; // Function which caused the scope
     scopeFuncParams: any[] = []; // Params given to the function ^
+    rawScopeFuncParams: any[] = [] // Raw params ^
+    scopeFuncName: string = ""; // Name of the function ^
 
     variables: {[name: string]: any} = {};
 
-    constructor(start: number, counter: number, func: Function, params: any[]) {
+    constructor(start: number, counter: number, func: Function, params: any[], funcName: string, funcRawParms: any[]) {
       this.start = start;
       this.scopeCounter = counter;
       this.scopeFunc = func;
       this.scopeFuncParams = params;
+      this.scopeFuncName = funcName;
+      this.rawScopeFuncParams = funcRawParms;
     }
 
     lastFunc() {
@@ -631,18 +636,36 @@ export module OmegaParser {
     runLastFunc(scopeCount: number, scopes: Scope[], output: Omega.Output) {
       return this.funcStack.pop().runFunction(scopeCount, scopes, output);
     }
+
+    runRaw(currFunctionName: string, rawParams: any[], count: number, scopes: Scope[], output: Omega.Output): any[] {
+      let func = new FuncRunner();
+      func.currFunctionName = currFunctionName;
+      func.rawParams = rawParams;
+      let tempParams = [];
+      func.rawParams.forEach(param => {
+        if (typeof param == "string" || typeof param == "number") {
+          tempParams.push(param);
+        } else {
+          tempParams.push(this.runRaw(param["currFunctionName"], param["rawParams"], count, scopes, output)[1]);
+        }
+      });
+      func.currParams = tempParams;
+      return func.runFunction(count, scopes, output);
+    }
   }
 
   class FuncRunner {
     currFunctionName = "";
+    rawParams = [];
     currParams = [];
     paramsStarted = false;
     expectingComma = false;
     expectingParam = true;
     readyToRun = false;
 
-    addParam(param: string | number) {
+    addParam(param: string | number, rawParam: any) {
       this.currParams.push(param);
+      this.rawParams.push(rawParam);
       this.expectingComma = true;
       this.expectingParam = false;
     }
@@ -660,6 +683,10 @@ export module OmegaParser {
       let returns = functions[this.currFunctionName](this.currParams, count, scopes, output);
       returns.push(functions[this.currFunctionName]);
       returns.push(this.currParams);
+      returns.push({
+        currFunctionName: this.currFunctionName,
+        rawParams: this.rawParams
+      }); // Raw call information
       return returns;
     }
   }
@@ -670,7 +697,7 @@ let output = OmegaParser.executeSafe(`
 
   let("counter", 0)
 
-  for(0, minus(10, get("counter"))){
+  while(more(10, get("counter"))){
     set("counter", plus(get("counter"), 1))
     print("hello!", get("counter"))
   }
