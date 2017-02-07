@@ -1,9 +1,10 @@
 
+export module OmegaParser {
 
-export module MacroParser {
+  const rollRegex = /^([1-9]+[0-9]*)d([1-9]+[0-9]*)$/g;
 
   const allowedCharacters = "abcdefghijklmnopqrstuvwxyz_";
-  const allowedNumbers = "0123456789."
+  const allowedNumbers = "0123456789.-"
   const operators = "+-*^/";
   const importantOperators = "*/^";
 
@@ -28,7 +29,7 @@ export module MacroParser {
       params.forEach(param => {
         strings.push(param.toString());
       });
-      console.log(JSON.stringify(loopContent(params[0], params[0]), null, 2));
+      console.log(strings.join(" "));
       return [false, ""]
     },
     "let": function(params: any[], index: number, scopes: Scope[]) {
@@ -69,22 +70,69 @@ export module MacroParser {
       let second = params[1] || 0;
       return [false, first - second];
     },
-    "roll": function(params: any[]) {
+    "roll": function(params: any[], index: number, scopes: Scope[]) {
       let rollParam = params[0] || "";
-      let paren = breakIntoParenthesis(rollParam);
+      let formatted = replaceFormatsWithVariables(rollParam, getAllCurrentVariables(scopes));
+
+      let paren = breakIntoParenthesis(formatted);
       paren = parenthesizeParenthesis(paren);
 
       if (!paren) {
         console.log("Macro parsing failed. Parenthesis(es) left open!");
         return [false, null];
       }
-      return [false, paren];
+
+      let functions = {
+        "floor": Math.floor
+      }
+
+
+      let tempContent: string[] = [];
+      paren.content.forEach(item => {
+        rollRegex.lastIndex = 0;
+        if (typeof item == "string") {
+          if (rollRegex.exec(item) == null) {
+            tempContent.push(item);
+          } else {
+            tempContent.push(calculcateParenthesis({parent: paren, func: "", content: [item]}, functions) + "");
+          }
+        } else {
+          tempContent.push(calculcateParenthesis(item, functions) + "");
+        }
+      });
+      paren.content = tempContent;
+
+      return [false, JSON.stringify([calculcateParenthesis(paren, functions), tempContent.join(" "), rollParam], null, 2)];
     }
   };
 
-  export function execute(text: string) {
+  export function executeSafe(text: string,
+    globalFunctions: {[name: string]: (params: string[]) => any} = {},
+    globalVariables: {[name: string]: any} = {}) {
 
+    try {
+      return execute(text, globalFunctions, globalVariables);
+    } catch (e) {
+      console.error("Fatal error occoured executing code.");
+      console.error(e);
+      return null;
+    }
+  }
+
+  export function execute(text: string,
+    globalFunctions: {[name: string]: (params: string[]) => any} = {},
+    globalVariables: {[name: string]: any} = {}) {
+
+    // Initialize global Scope
     let scopeStack = [new Scope(0, 0, () => {}, [])];
+
+    // Initialize global functions and variables
+    Object.keys(globalFunctions).forEach(func => {
+      functions[func] = globalFunctions[func];
+    });
+    Object.keys(globalVariables).forEach(v => {
+      scopeStack[0].variables[v] = globalVariables[v];
+    });
 
     let currentString: string = undefined;
     let currentNumber: string = undefined;
@@ -298,65 +346,75 @@ export module MacroParser {
     lastScope(stack).variables[name] = initialValue;
   }
 
-  class Scope {
-    funcStack: FuncRunner[] = [];
-    ignoreUntilScopeEnds: number = 0;
-
-    scopeCounter: number = 0; // How many'th time interpreter is in the scope
-    start: number = 0; // What character the scope started at
-
-    scopeFunc: Function = null; // Function which caused the scope
-    scopeFuncParams: any[] = []; // Params given to the function ^
-
-    variables: {[name: string]: any} = {};
-
-    constructor(start: number, counter: number, func: Function, params: any[]) {
-      this.start = start;
-      this.scopeCounter = counter;
-      this.scopeFunc = func;
-      this.scopeFuncParams = params;
-    }
-
-    lastFunc() {
-      return this.funcStack[this.funcStack.length - 1];
-    }
-
-    runLastFunc(scopeCount: number, scopes: Scope[]) {
-      return this.funcStack.pop().runFunction(scopeCount, scopes);
-    }
+  function replaceFormatsWithVariables(text: string, variables: {[key: string]: any}): string {
+    Object.keys(variables).forEach(v => {
+      do {
+        text = text.replace("{" + v + "}", "(" + variables[v] + ")");
+      } while (text.indexOf("{" + v + "}") >= 0)
+    });
+    return text;
   }
 
-  class FuncRunner {
-    currFunctionName = "";
-    currParams = [];
-    paramsStarted = false;
-    expectingComma = false;
-    expectingParam = true;
-    readyToRun = false;
+  function calculcateParenthesis(paren: Parenthesis, functions: {[key: string]: (input: number) => number}): number {
 
-    addParam(param: string | number) {
-      this.currParams.push(param);
-      this.expectingComma = true;
-      this.expectingParam = false;
-    }
-
-    applyComma() {
-      this.expectingComma = false;
-      this.expectingParam = true;
-    }
-
-    runFunction(count: number, scopes: Scope[]) {
-      if (!(this.currFunctionName in functions)) {
-        console.error(`Function not found: ${this.currFunctionName}`);
-        return [false, ""];
+    let currTotal = 0;
+    let trueContent: string[] = [];
+    paren.content.forEach(item => {
+      if (typeof item != "string") {
+        trueContent.push(calculcateParenthesis(item, functions) + "");
+      } else {
+        trueContent.push(item);
       }
-      let returns = functions[this.currFunctionName](this.currParams, count, scopes);
-      returns.push(functions[this.currFunctionName]);
-      returns.push(this.currParams);
-      return returns;
-    }
-  }
+    });
+    let currOperator: string = "+";
+    for (let i = 0; i < trueContent.length; i++) {
+      let currTerm = trueContent[i];
+      if (isOperator(currTerm)) {
+        currOperator = currTerm;
+      } else {
+        rollRegex.lastIndex = 0;
+        let result = rollRegex.exec(currTerm);
+        let value = 0;
+        if (result) {
+          value = 0;
+          for (let x = 0; x < parseInt(result[1]); x++) {
+            value += Math.floor(Math.random() * parseInt(result[2])) + 1;
+          }
+        } else {
+          value = parseFloat(currTerm);
+        }
+        switch (currOperator) {
+          case "+": {
+            currTotal += value;
+            break;
+          }
+          case "-": {
+            currTotal -= value;
+            break;
+          }
+          case "*": {
+            currTotal *= value;
+            break;
+          }
+          case "/": {
+            currTotal /= value;
+            break;
+          }
+          case "^": {
+            currTotal = Math.pow(currTotal, value);
+            break;
+          }
+        }
 
+      }
+    }
+
+    if (paren.func.trim() in functions) {
+      currTotal = functions[paren.func.trim()](currTotal);
+    }
+
+    return currTotal;
+  }
 
   function breakIntoParenthesis(text: string) {
     let rootParen: Parenthesis = {
@@ -373,7 +431,11 @@ export module MacroParser {
 
       if (c == "(") {
         if (currString.trim().length > 0) {
-          currParen.content.push(currString.trim());
+          if (currString[currString.length - 1] != " " && !isOperator(currString)) {
+            currFunc = currString;
+          } else {
+            currParen.content.push(currString.trim());
+          }
         }
         currString = "";
         let newParen: Parenthesis = {
@@ -451,10 +513,8 @@ export module MacroParser {
             temp[firstImportantIndex],
             temp[firstImportantIndex + 1]]
         });
-        let rest = paren.content.slice(firstImportantIndex + 2);
-        if (rest) {
-          paren.content.concat(rest);
-        }
+        let rest = temp.slice(firstImportantIndex + 2);
+        paren.content = paren.content.concat(rest);
       }
 
     } while (firstImportantIndex != -1)
@@ -474,10 +534,73 @@ export module MacroParser {
     parent: Parenthesis;
   }
 
+
+  class Scope {
+    funcStack: FuncRunner[] = [];
+    ignoreUntilScopeEnds: number = 0;
+
+    scopeCounter: number = 0; // How many'th time interpreter is in the scope
+    start: number = 0; // What character the scope started at
+
+    scopeFunc: Function = null; // Function which caused the scope
+    scopeFuncParams: any[] = []; // Params given to the function ^
+
+    variables: {[name: string]: any} = {};
+
+    constructor(start: number, counter: number, func: Function, params: any[]) {
+      this.start = start;
+      this.scopeCounter = counter;
+      this.scopeFunc = func;
+      this.scopeFuncParams = params;
+    }
+
+    lastFunc() {
+      return this.funcStack[this.funcStack.length - 1];
+    }
+
+    runLastFunc(scopeCount: number, scopes: Scope[]) {
+      return this.funcStack.pop().runFunction(scopeCount, scopes);
+    }
+  }
+
+  class FuncRunner {
+    currFunctionName = "";
+    currParams = [];
+    paramsStarted = false;
+    expectingComma = false;
+    expectingParam = true;
+    readyToRun = false;
+
+    addParam(param: string | number) {
+      this.currParams.push(param);
+      this.expectingComma = true;
+      this.expectingParam = false;
+    }
+
+    applyComma() {
+      this.expectingComma = false;
+      this.expectingParam = true;
+    }
+
+    runFunction(count: number, scopes: Scope[]) {
+      if (!(this.currFunctionName in functions)) {
+        console.error(`Function not found: ${this.currFunctionName}`);
+        return [false, ""];
+      }
+      let returns = functions[this.currFunctionName](this.currParams, count, scopes);
+      returns.push(functions[this.currFunctionName]);
+      returns.push(this.currParams);
+      return returns;
+    }
+  }
+
 }
 
-MacroParser.execute(`print(roll("1d6 + 5 / 2 "))`);
-
+OmegaParser.executeSafe(`
+  print(roll("{strength} * 5 + floor(7 / 2)"))
+  `, {}, {
+    "strength": 3
+  });
 /*
 
 set("joku", 3)
