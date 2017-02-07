@@ -5,7 +5,7 @@ export module OmegaParser {
 
   const rollRegex = /^([1-9]+[0-9]*)d([1-9]+[0-9]*)$/g;
 
-  const allowedCharacters = "abcdefghijklmnopqrstuvwxyz_";
+  const allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz_";
   const allowedNumbers = "0123456789.-"
   const operators = "+-*^/";
   const importantOperators = "*/^";
@@ -94,6 +94,21 @@ export module OmegaParser {
         middleStep: tempContent.join(" "),
         initial: rollParam}];
     },
+    "random": function(params: any[]) {
+      return [false, Math.random()];
+    },
+    "floor": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.floor(first)];
+    },
+    "ceil": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.ceil(first)];
+    },
+    "round": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.round(first)];
+    },
     "plus": function(params: any[]) {
       let first = params[0] || 0;
       let second = params[1] || 0;
@@ -103,6 +118,36 @@ export module OmegaParser {
       let first = params[0] || 0;
       let second = params[1] || 0;
       return [false, first - second];
+    },
+    "mult": function(params: any[]) {
+      let first = params[0] || 0;
+      let second = params[1] || 0;
+      return [false, first * second];
+    },
+    "div": function(params: any[]) {
+      let first = params[0] || 0;
+      let second = params[1] || 0;
+      return [false, first / second];
+    },
+    "pow": function(params: any[]) {
+      let first = params[0] || 0;
+      let second = params[1] || 0;
+      return [false, Math.pow(first, second)];
+    },
+    "cos": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.cos(first)];
+    },
+    "sin": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.sin(first)];
+    },
+    "tan": function(params: any[]) {
+      let first = params[0] || 0;
+      return [false, Math.tan(first)];
+    },
+    "PI": function() {
+      return [false, Math.PI];
     },
     "for": function(params: any[], index: number) {
       let begin = params[0] || 0;
@@ -128,12 +173,12 @@ export module OmegaParser {
       let second = params[1] || null;
       return [false, first == second]
     },
-    "more": function(params: any[]) {
+    "moreThan": function(params: any[]) {
       let first = params[0] || null;
       let second = params[1] || null;
       return [false, first > second]
     },
-    "moreorequal": function(params: any[]) {
+    "moreOrEqual": function(params: any[]) {
       let first = params[0] || null;
       let second = params[1] || null;
       return [false, first >= second]
@@ -168,7 +213,7 @@ export module OmegaParser {
     globalVariables: {[name: string]: any} = {}): Omega.Output {
 
     // Initialize global Scope
-    let scopeStack = [new Scope(0, 0, () => {}, [], "", [])];
+    let scopeStack = [new Scope(0, 0, "", [])];
 
     // Initialize global functions and variables
     Object.keys(globalFunctions).forEach(func => {
@@ -215,12 +260,12 @@ export module OmegaParser {
           }
           let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().paramsStarted && !lastScope(scopeStack).lastFunc().expectingComma) {
-            lastScope(scopeStack).lastFunc().addParam(returned[1], returned[4]);
+            lastScope(scopeStack).lastFunc().addParam(returned[1], returned[2]);
           }
         } else {
           let returned = lastScope(scopeStack).runLastFunc(0, scopeStack, output);
           if (returned[0]) {
-            scopeStack.push(new Scope(i + 1, 0, returned[2], returned[3], returned[4]["currFunctionName"], returned[4]["rawParams"]));
+            scopeStack.push(new Scope(i + 1, 0, returned[2]["currFunctionName"], returned[2]["rawParams"]));
           } else {
             lastScope(scopeStack).ignoreUntilScopeEnds = 1;
           }
@@ -237,11 +282,10 @@ export module OmegaParser {
         }
 
         let oldScope = scopeStack.pop();
-        //let returned = oldScope.scopeFunc(oldScope.scopeFuncParams, oldScope.scopeCounter + 1);
         let returned = oldScope.runRaw(oldScope.scopeFuncName, oldScope.rawScopeFuncParams, oldScope.scopeCounter + 1, scopeStack, output)
         if (returned[0]) {
           i = oldScope.start;
-          scopeStack.push(new Scope(i, oldScope.scopeCounter + 1, oldScope.scopeFunc, oldScope.scopeFuncParams, oldScope.scopeFuncName, oldScope.rawScopeFuncParams));
+          scopeStack.push(new Scope(i, oldScope.scopeCounter + 1, oldScope.scopeFuncName, oldScope.rawScopeFuncParams));
         } else {
           continue;
         }
@@ -613,18 +657,14 @@ export module OmegaParser {
     scopeCounter: number = 0; // How many'th time interpreter is in the scope
     start: number = 0; // What character the scope started at
 
-    scopeFunc: Function = null; // Function which caused the scope
-    scopeFuncParams: any[] = []; // Params given to the function ^
     rawScopeFuncParams: any[] = [] // Raw params ^
     scopeFuncName: string = ""; // Name of the function ^
 
     variables: {[name: string]: any} = {};
 
-    constructor(start: number, counter: number, func: Function, params: any[], funcName: string, funcRawParms: any[]) {
+    constructor(start: number, counter: number, funcName: string, funcRawParms: any[]) {
       this.start = start;
       this.scopeCounter = counter;
-      this.scopeFunc = func;
-      this.scopeFuncParams = params;
       this.scopeFuncName = funcName;
       this.rawScopeFuncParams = funcRawParms;
     }
@@ -681,8 +721,6 @@ export module OmegaParser {
         return [false, ""];
       }
       let returns = functions[this.currFunctionName](this.currParams, count, scopes, output);
-      returns.push(functions[this.currFunctionName]);
-      returns.push(this.currParams);
       returns.push({
         currFunctionName: this.currFunctionName,
         rawParams: this.rawParams
@@ -693,13 +731,14 @@ export module OmegaParser {
 
 }
 
+/** UNCOMMENT FOR TESTING
+
 let output = OmegaParser.executeSafe(`
 
-  let("counter", 0)
+  let("counter", 5)
 
-  while(more(10, get("counter"))){
-    set("counter", plus(get("counter"), 1))
-    print("hello!", get("counter"))
+  if(and(true(), moreThan(5, get("counter")))){
+    print("Hi!")
   }
   `, {}, {
     "strength": 3
@@ -722,7 +761,6 @@ output.stack.forEach(out => {
   }
 });
 /*
-
 set("joku", 3)
 
 for(0, 5){
