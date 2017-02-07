@@ -4,25 +4,41 @@ export module MacroParser {
 
   const allowedCharacters = "abcdefghijklmnopqrstuvwxyz_";
   const allowedNumbers = "0123456789."
+  const operators = "+-*^/";
+  const importantOperators = "*/^";
+
+  function loopContent(paren: Parenthesis, rootParen: Parenthesis): Parenthesis {
+    paren.parent = null;
+    paren.content.forEach((cont, i) => {
+      if (typeof cont != "string") {
+        paren.content[i] = loopContent(cont, rootParen);
+      }
+    });
+    return paren;
+  }
 
   let functions = {
-    "for": function(params: any[], index: number, scopes: Scope[]) {
+    "for": function(params: any[], index: number) {
       let begin = params[0] || 0;
       let end = params[1] || 0;
       return [index < (end - begin), ""];
     },
-    "print": function(params, index, scopes: Scope[]) {
-      console.log(params.join(""));
+    "print": function(params: any[]) {
+      let strings: string[] = [];
+      params.forEach(param => {
+        strings.push(param.toString());
+      });
+      console.log(JSON.stringify(loopContent(params[0], params[0]), null, 2));
       return [false, ""]
     },
-    "let": function(params, index, scopes: Scope[]) {
+    "let": function(params: any[], index: number, scopes: Scope[]) {
       let varName = params[0];
       let value = params[1];
       if (varName === undefined || value === undefined) { return [false, ""]; }
       createNewVariable(scopes, varName, value);
       return [false, value]
     },
-    "set": function(params, index, scopes: Scope[]) {
+    "set": function(params: any[], index: number, scopes: Scope[]) {
       let varName = params[0];
       let value = params[1];
 
@@ -34,7 +50,7 @@ export module MacroParser {
       editVariable(scopes, varName, value);
       return [false, value]
     },
-    "get": function(params, index, scopes: Scope[]) {
+    "get": function(params: any[], index: number, scopes: Scope[]) {
       let varName = params[0];
       if (!varName) { return [false, ""]; }
       let vars = getAllCurrentVariables(scopes);
@@ -43,15 +59,26 @@ export module MacroParser {
       }
       return [false, ""]
     },
-    "plus": function(params, index, scopes: Scope[]) {
+    "plus": function(params: any[]) {
       let first = params[0] || 0;
       let second = params[1] || 0;
-      return [false, first + second]
+      return [false, first + second];
     },
-    "minus": function(params, index, scopes: Scope[]) {
+    "minus": function(params: any[]) {
       let first = params[0] || 0;
       let second = params[1] || 0;
-      return [false, first - second]
+      return [false, first - second];
+    },
+    "roll": function(params: any[]) {
+      let rollParam = params[0] || "";
+      let paren = breakIntoParenthesis(rollParam);
+      paren = parenthesizeParenthesis(paren);
+
+      if (!paren) {
+        console.log("Macro parsing failed. Parenthesis(es) left open!");
+        return [false, null];
+      }
+      return [false, paren];
     }
   };
 
@@ -80,7 +107,7 @@ export module MacroParser {
         }
       }
 
-      if (lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().readyToRun) {
+      if (currentString === undefined && lastScope(scopeStack).funcStack.length != 0 && lastScope(scopeStack).lastFunc().readyToRun) {
         if (c != "{") {
           if (isAllowedLetter(c) || isAllowedNumber(c)) {
             console.error(`Unexpected character after function call (${i})`)
@@ -100,7 +127,7 @@ export module MacroParser {
         }
       }
 
-      if (c == "}" && !currentString && !justLeftScope) {
+      if (currentString === undefined && c == "}" && !currentString && !justLeftScope) {
         if (lastScope(scopeStack).funcStack.length != 0) {
           console.error(`Cannot exit out of scope in middle of a function call. (${i})`);
           return false;
@@ -119,7 +146,7 @@ export module MacroParser {
         }
       }
 
-      if (isAllowedNumber(c)) {
+      if (currentString === undefined && isAllowedNumber(c)) {
         if (currentNumber) {
           currentNumber += c;
           continue;
@@ -191,7 +218,7 @@ export module MacroParser {
         }
       }
 
-      if (c == "(") {
+      if (currentString === undefined && c == "(") {
         if (expectingParams(scopeStack)) {
           lastScope(scopeStack).lastFunc().paramsStarted = true;
         } else {
@@ -199,7 +226,7 @@ export module MacroParser {
         }
       }
 
-      if (c == ")") {
+      if (currentString === undefined && c == ")") {
         if (lastScope(scopeStack).funcStack.length == 0 || (lastScope(scopeStack).lastFunc().paramsStarted && (!lastScope(scopeStack).lastFunc().expectingComma && lastScope(scopeStack).lastFunc().currParams.length > 0))) {
           console.error(`Function not started, opening parenthesis not started or not expecting a closing parenthesis (${i})`);
           return false;
@@ -219,6 +246,16 @@ export module MacroParser {
 
   function isAllowedNumber(l: string): boolean {
     let chars = allowedNumbers.split("");
+    return chars.indexOf(l) >= 0;
+  }
+
+  function isOperator(l: string): boolean {
+    let chars = operators.split("");
+    return chars.indexOf(l) >= 0;
+  }
+
+  function isImportantOperator(l: string): boolean {
+    let chars = importantOperators.split("");
     return chars.indexOf(l) >= 0;
   }
 
@@ -320,14 +357,126 @@ export module MacroParser {
     }
   }
 
+
+  function breakIntoParenthesis(text: string) {
+    let rootParen: Parenthesis = {
+      parent: null,
+      func: "",
+      content: []
+    };
+    let currParen = rootParen;
+    let currString = "";
+
+    let currFunc = "";
+    for (let i = 0; i < text.length; i++) {
+      let c = text[i];
+
+      if (c == "(") {
+        if (currString.trim().length > 0) {
+          currParen.content.push(currString.trim());
+        }
+        currString = "";
+        let newParen: Parenthesis = {
+          parent: currParen,
+          func: currFunc,
+          content: []
+        }
+        currParen.content.push(newParen);
+        currParen = newParen;
+        continue;
+      } else if (c == ")") {
+        if (currString.trim().length > 0) {
+          currParen.content.push(currString.trim());
+        }
+        currString = "";
+        currParen = currParen.parent;
+        continue;
+      } else if (!isAllowedLetter(c)) {
+        currFunc = "";
+      }
+      if (isOperator(c)) {
+        if (currString.trim().length > 0) {
+          currParen.content.push(currString.trim());
+        }
+        currString = "";
+        currParen.content.push(c);
+        continue;
+      }
+
+      currString += c;
+      if (i == text.length - 1) {
+        // If this is the last character, add the string as new content
+        currParen.content.push(currString.trim());
+      }
+
+    }
+
+    if (currParen != rootParen) {
+      return null;
+    }
+    return rootParen;
+  }
+
+  function parenthesizeParenthesis(paren: Parenthesis): Parenthesis {
+
+    paren.content.forEach(c => {
+      if (typeof c != "string") {
+        c = parenthesizeParenthesis(c);
+      }
+    });
+
+    let firstImportantIndex = -1;
+    let ops = importantOperators.split("");
+    do {
+      firstImportantIndex = -1;
+
+      for (let i = 0; i < ops.length; i++) {
+        let idx = paren.content.indexOf(ops[i]);
+        if (idx != -1) {
+          if (firstImportantIndex == -1) {
+            firstImportantIndex = idx;
+          } else {
+            firstImportantIndex = Math.min(firstImportantIndex, idx);
+          }
+        }
+      }
+
+      if (firstImportantIndex != -1) {
+        let temp = paren.content;
+        paren.content = paren.content.slice(0, Math.max(0, firstImportantIndex - 2))
+        paren.content.push({
+          parent: paren,
+          func: "",
+          content: [temp[firstImportantIndex - 1],
+            temp[firstImportantIndex],
+            temp[firstImportantIndex + 1]]
+        });
+        let rest = paren.content.slice(firstImportantIndex + 2);
+        if (rest) {
+          paren.content.concat(rest);
+        }
+      }
+
+    } while (firstImportantIndex != -1)
+
+
+    for (let i = 0; i < paren.content.length; i++) {
+      let currTerm = paren.content[i];
+    }
+
+    return paren;
+  }
+
+  // An interface used only in the small macro-language used by the roll-function
+  interface Parenthesis {
+    func: string;
+    content: (Parenthesis | string)[];
+    parent: Parenthesis;
+  }
+
 }
 
-MacroParser.execute(`
-  let("counter", 0)
-  for(0, 5){
-    print("counter: ", get("counter"))
-    set("counter", plus(get("counter"), 1))
-  }`);
+MacroParser.execute(`print(roll("1d6 + 5 / 2 "))`);
 
 /*
 
