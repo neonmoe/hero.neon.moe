@@ -1,4 +1,5 @@
 
+import * as express from "express";
 import {Omega} from "./omegaOutput"
 
 export module OmegaParser {
@@ -218,7 +219,7 @@ export module OmegaParser {
     // Initialize global functions and variables
     Object.keys(globalFunctions).forEach(func => {
       functions[func] = (params: any[], index: number, scopes: Scope[], output: Omega.Output) => {
-        globalFunctions[func](params, output);
+        return [false, globalFunctions[func](params, output)];
       }
     });
     Object.keys(globalVariables).forEach(v => {
@@ -731,16 +732,16 @@ export module OmegaParser {
 
 }
 
-/** UNCOMMENT FOR TESTING
 
+/*
 let output = OmegaParser.executeSafe(`
 
-  let("counter", 5)
-
-  if(and(true(), moreThan(5, get("counter")))){
-    print("Hi!")
-  }
-  `, {}, {
+  print(test())
+  `, {
+    "test": function() {
+      return "hi!"
+    }
+  }, {
     "strength": 3
   });
 

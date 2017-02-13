@@ -6,6 +6,7 @@ import {Authentication} from "./authentication";
 import {Sheetview} from "./sheetview";
 import {Universe} from "./universe";
 import {Commander} from "./commander";
+import {OmegaRequestHandler} from "./omegaRequestHandler";
 import {FileReadWrite} from "./fileRW";
 
 const app = express();
@@ -32,6 +33,7 @@ app.get("/a", Authentication.view); // View current account
 app.get("/a/:handle", Authentication.view); // View account at :handle
 app.get("/a/:handle/public", Authentication.viewPublic); // View account's public page at :handle
 app.put("/a/e/h/:handle", Authentication.editHandle); // /account/edit/handle (Edit account handle)
+app.get("/o/e", OmegaRequestHandler.executeOnRequest); // /omega/execute (Return executed output)
 
 app.get("/emojifont", (req, res) => {
    res.sendFile(path.resolve("./") + "/views/emojione-svg.woff2");

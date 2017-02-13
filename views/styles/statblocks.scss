@@ -15,6 +15,7 @@
 
       .name {
          cursor: help;
+         padding-left: 0.5em;
       }
    }
 
@@ -57,6 +58,18 @@
    }
    .negative.button:hover {
       background-color: $negative + #333;
+      cursor: pointer;
+   }
+
+   .neutral {
+      background-color: $primary-color + #070707;;
+      color: $neutral;
+      font-weight: 600;
+      transition: 0.1s;
+
+   }
+   .neutral.button:hover {
+      background-color: $neutral + #333;
       cursor: pointer;
    }
 
@@ -153,4 +166,9 @@
          cursor: pointer;
       }
    }
+}
+
+textarea.code {
+  font-family: monospace !important;
+  color: #bbbbff;
 }

@@ -11,7 +11,7 @@ function setCurrentTab() {
   }
 }
 
-document.getElementsByTagName("body")[0].onload = setCurrentTab;
+addOnLoad(setCurrentTab);
 
 function switchTab(tabname) {
   if (currentTab == tabname) { return; }

@@ -4,6 +4,9 @@ var worldName = addressParts[2];
 var netdb = new NetDB();
 update(0);
 
+// Functions to run on load
+let onLoadQueue = [];
+
 // Interaction stuff
 function increaseStat(stat) {
   var req = new XMLHttpRequest();
@@ -140,3 +143,15 @@ function sync() {
   window.setTimeout(sync, delayTime);
 }
 sync();
+
+function callOnLoadFunctions() {
+  onLoadQueue.forEach(func => {
+    func();
+  });
+}
+
+function addOnLoad(func) {
+  onLoadQueue.push(func);
+}
+
+document.body.onload = callOnLoadFunctions;

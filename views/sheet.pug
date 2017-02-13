@@ -56,11 +56,10 @@ html
                   p(class="icon" title="Player") 🙂️
               div(class="statblock")
                 div(class="input-stuffer")
-                  div(class="input-stuffer")
-                    if edit
-                      textarea(id="textstat-playername" onchange="setTextStat('playername')")
-                    else
-                      textarea(id="textstat-playername" readonly=true)
+                  if edit
+                    textarea(id="textstat-playername" onchange="setTextStat('playername')")
+                  else
+                    textarea(id="textstat-playername" readonly=true)
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
                   p Character Name
@@ -68,11 +67,10 @@ html
                   p(class="icon" title="Character Name") 🤺
               div(class="statblock")
                 div(class="input-stuffer")
-                  div(class="input-stuffer")
-                    if edit
-                      textarea(id="textstat-charactername" onchange="setTextStat('charactername')")
-                    else
-                      textarea(id="textstat-charactername" readonly=true)
+                  if edit
+                    textarea(id="textstat-charactername" onchange="setTextStat('charactername')")
+                  else
+                    textarea(id="textstat-charactername" readonly=true)
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
                   p Alternate Identities
@@ -80,11 +78,10 @@ html
                   p(class="icon" title="Alternate Identities") 🎭
               div(class="statblock")
                 div(class="input-stuffer")
-                  div(class="input-stuffer")
-                    if edit
-                      textarea(id="textstat-alternateidentities" onchange="setTextStat('alternateidentities')")
-                    else
-                      textarea(id="textstat-alternateidentities" readonly=true)
+                  if edit
+                    textarea(id="textstat-alternateidentities" onchange="setTextStat('alternateidentities')")
+                  else
+                    textarea(id="textstat-alternateidentities" readonly=true)
 
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-7")
@@ -312,9 +309,42 @@ html
             div(class="column")
               div(class="flexed-statblock")
                 div(class="title column-flex center flex-size-8")
+                  p New Power / Edit Power
+                div(class="column-flex center flex-size-1")
+                  p(class="icon" title="Create") ✔️
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-1")
+                  div(class="column-flex center name" title="Name of the power")
+                    p Name:
+                div(class="column-flex center valuefield flex-size-8")
+                  input(type="text")
+                div(class="column-flex center button positive flex-size-1")
+                  p Done
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-8")
+                  div(class="column-flex center name" title="The code that will be run when the power is used.")
+                    p Omega macro:
+              div(class="statblock-5")
+                div(class="input-stuffer")
+                  textarea(id="power-macro" class="code" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false")
+
+              div(class="flexed-statblock")
+                div(class="nameplate flex-size-8")
+                  div(class="column-flex center name" title="Output the code presented, after pressing 'Test'")
+                    p Output:
+                div(id="run-macro" class="column-flex center button neutral flex-size-1")
+                  p Test
+
+              div(class="statblock-3")
+                div(class="input-stuffer")
+                  textarea(id="macro-output" class="code" readonly="true" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false")
+
+              div(class="flexed-statblock")
+                div(class="title column-flex center flex-size-8")
                   p Powers
                 div(class="column-flex center flex-size-1")
-                  p(class="icon" title="Roll") 🎲
+                  p(class="icon" title="Create") ️:)
 
         div(class="tabcontent" data-active="false" data-tab="modifiers")
           div(class="column")
@@ -389,10 +419,11 @@ html
                   p Misc
 
     <script>var exports = {};
-      include sheet-tabs.js
       include ../js/namer.js
       include ../js/netdb.js
       include ../js/characterUtils.js
       include sheet.js
       include sheet-newstats.js
+      include sheet-tabs.js
+      include sheet-powers.js
     </script>
